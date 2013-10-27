@@ -1,0 +1,116 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
+        <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
+
+        <title>Wharf</title>
+
+    </head>
+
+    <body>
+        <div class="container-narrow">
+            <!-- nav -->
+            <div class="masthead">
+                <ul class="nav nav-pills pull-right">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
+                    <li><a href="http://docker.io">Docker</a></li>
+
+                </ul>
+                <h3 class="muted">Wharf</h3>
+            </div>
+
+            <hr>
+
+            <div class="jubotron">
+                <h1>Let's get started with Wharf!</h1>
+                <p class="lead">Try one of the services already available below on Wharf, or add your own service in the form of a Dockerfile.</p>
+                <div class="row-fluid marketing">
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                </div>
+                <div class="row-fluid marketing">
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                    <div class="span3">
+                        <a id="button" class="btn btn-medium btn-success">Try MongoDB now</a>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row-fluid marketing">
+                <div class="span6 well">
+                    <h4>About <a href="https://github.com/cglewis/wharf">Wharf</a></h4>
+                    <p>Wharf is an open-source Software-as-a-Service platform build with the power of docker to enable any Dockerfile to become an on-demand service in the cloud.</p>
+                </div>
+
+                <div class="span6 well">
+                    <h4>About <a href="http://docker.io">Docker</a></h4>
+                    <p>Docker is an open-source engine which automates the deployment of applications as highly portable, self-sufficient containers which are independent of hardware, language, framework, packaging system and hosting provider.</p>
+
+                </div>
+
+            </div>
+
+        <div class="footer">
+            <div class="row-fluid marketing">
+                <div class="span8 well">
+                    <p>Powered by <a href="http://docker.io">Docker</a>.</p>
+                </div>
+                <div class="span4 well">
+                    <p class="muted credit">Credit: Nick Stinemates</p>
+                </div>
+            </div>
+        </div>
+
+        </div> <!-- /container -->
+
+        <script type="text/javascript">
+            $("#button").click(function() {
+                $.ajax({
+                    url: '/new',
+                    type: 'POST',
+                    dataType: 'json'
+                    }).done(function(response) {
+                        console.log(response);
+                        window.location = build_url(response);
+                    });
+                });
+
+            function build_url(response) {
+                pathArray = window.location.href.split( '/' );
+                protocol = pathArray[0];
+                host = pathArray[2];
+                url = protocol + '//' + host + "/details/" + response.url;
+                return url;
+            }
+
+        </script>
+</html>
