@@ -16,7 +16,7 @@ app.debug = True
 
 #IMAGE_NAME = "damien/mongodb"
 #COMMAND = ["/usr/bin/mongod", "--config", "/etc/mongodb.conf"]
-#DOMAIN = "l41-vsrv-docker2.b.internal"
+#DOMAIN = "domain"
 #HIPACHE_PORT="80"
 #EXPOSED_PORT="27017"
 
