@@ -42,10 +42,18 @@ def index():
 @app.route('/saas/<service>')
 def saas(service):
     about = ""
+    body = ""
+    links = ""
     about_path = "services/"+service+"/html/about.html"
     with open(about_path, 'r') as content_file:
         about = content_file.read()
-    return render_template("saas.html",service=service,about=about)
+    body_path = "services/"+service+"/html/body.html"
+    with open(body_path, 'r') as content_file:
+        body = content_file.read()
+    links_path = "services/"+service+"/html/links.html"
+    with open(links_path, 'r') as content_file:
+        links = content_file.read()
+    return render_template("saas.html",service=service,about=about,body=body,links=links)
 
 @app.route('/new', methods=["POST"])
 def new():
@@ -68,9 +76,7 @@ def new():
 
 @app.route('/details/<service>/<url>')
 def details(url, service):
-    body = ""
-    links = ""
-    return render_template("details.html",url=url,service=service,body=body,links=links)
+    return render_template("details.html",url=url,service=service)
 
 @app.route('/robot.txt')
 def robot():
