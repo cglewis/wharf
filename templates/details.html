@@ -8,18 +8,13 @@
         <link href="/static/css/bootstrap.css" rel="stylesheet">
         <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
 
         <title>Your {{ service }} Instance Details</title>
-
     </head>
 
     <body>
-
-
         <div class="container-narrow">
-
             <!-- nav -->
             <div class="masthead">
                 <ul class="nav nav-pills pull-right">
@@ -36,32 +31,24 @@
                 <div class="span12 well">
                     <h4>Instance Details..</h4>
                     <p>Go now, your instance is waiting: <a href="http://{{ url }}">{{ url }}</a></p>
-                    <h2>Try it in python</h2>
-                    <p><pre>
-from pymongo import Connection
-
-HOST="{{ url.split(":")[0] }}"
-PORT={{ url.split(":")[1] }}
-c = Connection(host=HOST, port=PORT)
-print "connected successfully"
-</pre></p>
+                    <h2>Try it in {{ client }}</h2>
+                    <p><pre>{{ test }}</pre></p>
 
                     <p class="muted">Please note: this is a fully functional trial of {{ service }}. The instance is constrained 50mb of space, and limited cpu/memory so as to prevent abuse. Due to such a high demand, your instance will not be guaranteed to exist for longer than 15 minutes.</p>
                 </div>
             </div>
 
-        <div class="footer">
-            <div class="row-fluid marketing">
-                <div class="span8 well">
-                    <p>Powered by <a href="http://docker.io">Docker</a>.</p>
-                </div>
-                <div class="span4 well">
-                    <p class="muted credit">Origin based on <a href="https://github.com/keeb/any-saas">any-saas</a> by Nick Stinemates</p>
+            <div class="footer">
+                <div class="row-fluid marketing">
+                    <div class="span8 well">
+                        <p>Powered by <a href="http://docker.io">Docker</a>.</p>
+                    </div>
+                    <div class="span4 well">
+                        <p class="muted credit">Origin based on <a href="https://github.com/keeb/any-saas">any-saas</a> by Nick Stinemates</p>
+                    </div>
                 </div>
             </div>
-        </div>
-
         </div> <!-- /container -->
-
+    </body>
 </html>
 

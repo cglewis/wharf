@@ -53,6 +53,7 @@ def saas(service):
     links_path = "services/"+service+"/html/links.html"
     with open(links_path, 'r') as content_file:
         links = content_file.read()
+        # !! TODO break out link and text and multiple links
     return render_template("saas.html",service=service,about=about,body=body,links=links)
 
 @app.route('/new', methods=["POST"])
@@ -76,7 +77,17 @@ def new():
 
 @app.route('/details/<service>/<url>')
 def details(url, service):
-    return render_template("details.html",url=url,service=service)
+    client = ""
+    test = ""
+    client_path = "services/"+service+"/client/client.txt"
+    with open(client_path, 'r') as content_file:
+        client = content_file.read()
+    client_a = client.split("\n")
+    client = client_a[0]
+    test_path = "services/"+service+"/client/"+client_a[1]
+    with open(test_path, 'r') as content_file:
+        test = content_file.read()
+    return render_template("details.html",url=url,service=service,client=client,test=test)
 
 @app.route('/robot.txt')
 def robot():
