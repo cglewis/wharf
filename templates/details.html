@@ -11,7 +11,7 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
 
-        <title>Your MongoDB Instance Details</title>
+        <title>Your {{ service }} Instance Details</title>
 
     </head>
 
@@ -27,7 +27,7 @@
                     <li><a href="http://mongodb.com">MongoDB</a></li>
                     <li><a href="http://docker.io">Docker</a></li>
                 </ul>
-                <h3 class="muted">Try MongoDB {{ foo }}</h3>
+                <h3 class="muted">Try {{ service }}</h3>
             </div>
 
             <hr>
@@ -46,7 +46,7 @@ c = Connection(host=HOST, port=PORT)
 print "connected successfully"
 </pre></p>
 
-                    <p class="muted">Please note: this is a fully functional trial of MongoDB. The instance is constrained 50mb of space, and limited cpu/memory so as to prevent abuse. Due to such a high demand, your instance will not be guaranteed to exist for longer than 15 minutes.</p>
+                    <p class="muted">Please note: this is a fully functional trial of {{ service }}. The instance is constrained 50mb of space, and limited cpu/memory so as to prevent abuse. Due to such a high demand, your instance will not be guaranteed to exist for longer than 15 minutes.</p>
                 </div>
             </div>
 

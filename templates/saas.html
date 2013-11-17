@@ -11,7 +11,7 @@
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
 
-        <title>Try MongoDB</title>
+        <title>Try {{ service }}</title>
 
     </head>
 
@@ -24,26 +24,21 @@
                     <li><a href="http://docker.io">Docker</a></li>
                     <li><a href="http://mongodb.com">MongoDB</a></li>
                 </ul>
-                <h3 class="muted">MongoDB</h3>
+                <h3 class="muted">{{ service }}</h3>
             </div>
 
             <hr>
 
             <div class="jubotron">
-                <h1>Want to try MongoDB?</h1>
-                <p class="lead">MongoDB is the leading NoSQL database, empowering businesses to be more agile and scalable. Fortune 500 companies and startups alike are using MongoDB to create new types of applications, improve customer experience, accelerate time to market and reduce costs.</p>
+                <h1>Want to try {{ service }}?</h1>
+                <p class="lead">{{ body }}</p>
                 <a id="button" class="btn btn-large btn-success">Try MongoDB now</a>
             </div>
 
             <hr>
 
             <div class="row-fluid marketing">
-                <div class="span6 well">
-                    <h4>About <a href="http://docker.io">Docker</a></h4>
-                    <p>Docker is an open-source engine which automates the deployment of applications as highly portable, self-sufficient containers which are independent of hardware, language, framework, packaging system and hosting provider.</p>
-                </div>
-
-                <div class="span6 well">
+                <div class="span12 well">
                     <h4>About <a href="http://mongodb.com">MongoDB</a></h4>
                     <p>{{ about }}</p>
                 </div>
@@ -79,7 +74,7 @@
                 pathArray = window.location.href.split( '/' );
                 protocol = pathArray[0];
                 host = pathArray[2];
-                url = protocol + '//' + host + "/details/" + response.url;
+                url = protocol + '//' + host + "/details/{{ service }}/" + response.url;
                 return url;
             }
 
