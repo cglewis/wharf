@@ -39,9 +39,13 @@ app.debug = True
 def index():
     return render_template("index.html")
 
-@app.route('/saas')
-def saas():
-    return render_template("saas.html")
+@app.route('/saas/<service>')
+def saas(service):
+    about = ""
+    about_path = "services/"+service+"/html/about.html"
+    with open(about_path, 'r') as content_file:
+        about = content_file.read()
+    return render_template("saas.html",service=service,about=about)
 
 @app.route('/new', methods=["POST"])
 def new():
@@ -62,9 +66,11 @@ def new():
             hipache_port=HIPACHE_PORT,
             id=container_id)
 
-@app.route('/details/<url>')
-def details(url):
-    return render_template("details.html",url=url,foo="TEST")
+@app.route('/details/<service>/<url>')
+def details(url, service):
+    body = ""
+    links = ""
+    return render_template("details.html",url=url,service=service,body=body,links=links)
 
 @app.route('/robot.txt')
 def robot():
