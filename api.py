@@ -64,7 +64,7 @@ def new():
 
 @app.route('/details/<url>')
 def details(url):
-    return render_template("details.html",url=url)
+    return render_template("details.html",url=url,foo="TEST")
 
 @app.route('/robot.txt')
 def robot():
