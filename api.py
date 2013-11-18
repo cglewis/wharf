@@ -71,9 +71,9 @@ def saas(service):
     link_path = "services/"+service+"/html/link.html"
     with open(link_path, 'r') as content_file:
         link = content_file.read()
-        link_a = link.split(" ", 1)
-        link = link_a[0]
-        link_name = link_a[1]
+    link_a = link.split(" ", 1)
+    link = link_a[0]
+    link_name = link_a[1]
     return render_template("saas.html",service=service,about=about,body=body,link=link,link_name=link_name)
 
 @app.route('/new', methods=["POST"])
@@ -104,9 +104,9 @@ def details(url, service):
     link_path = "services/"+service+"/html/link.html"
     with open(link_path, 'r') as content_file:
         link = content_file.read()
-        link_a = link.split(" ", 1)
-        link = link_a[0]
-        link_name = link_a[1]
+    link_a = link.split(" ", 1)
+    link = link_a[0]
+    link_name = link_a[1]
     client_path = "services/"+service+"/client/client.txt"
     with open(client_path, 'r') as content_file:
         client = content_file.read()
