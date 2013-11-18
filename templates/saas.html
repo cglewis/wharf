@@ -61,7 +61,7 @@
     <script type="text/javascript">
         $("#button").click(function() {
             $.ajax({
-                url: '/new',
+                url: '/new/{{ service }}',
                 type: 'POST',
                 dataType: 'json'
                 }).done(function(response) {

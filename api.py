@@ -76,9 +76,19 @@ def saas(service):
     link_name = link_a[1]
     return render_template("saas.html",service=service,about=about,body=body,link=link,link_name=link_name)
 
-@app.route('/new', methods=["POST"])
-def new():
-    container = c.create_container(IMAGE_NAME, COMMAND, ports=[EXPOSED_PORT])
+@app.route('/new/<service>', methods=["POST"])
+def new(service):
+    exposed_ports = []
+    # !! TODO try/expect
+    dockerfile = "services/"+service+"/docker/Dockerfile"
+    with open(dockerfile, 'r') as content_file:
+        for line in content_file:
+            if line.startswith("EXPOSE"):
+                line = line.strip()
+                line_a = line.split(" ")
+                for port in line_a[1:]:
+                    exposed_ports.append(port)
+    container = c.create_container(IMAGE_NAME, ports=exposed_ports)
     container_id = container["Id"]
     c.start(container_id)
     container_port = c.port(container_id, EXPOSED_PORT)
