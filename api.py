@@ -4,13 +4,13 @@ from flask import render_template
 from flask import request
 from flask import jsonify
 
-#from docker import client
+from docker import client
 
 from os import environ
 from os import listdir
 from os import path
 
-#import redis
+import redis
 import time
 
 app = Flask(__name__)
@@ -19,10 +19,11 @@ app.debug = True
 #set defaults
 
 #IMAGE_NAME = "damien/mongodb"
-#COMMAND = ["/usr/bin/mongod", "--config", "/etc/mongodb.conf"]
 #DOMAIN = "domain"
 #HIPACHE_PORT="80"
-#EXPOSED_PORT="27017"
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+DOCKER_HOST="localhost"
 
 #environment variables, must be set in order for application to function
 #try:
@@ -36,8 +37,8 @@ app.debug = True
 #    print environ
 #    import sys; sys.exit(1)
 
-#r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
-#c = client.Client(base_url='http://%s:4243' % DOCKER_HOST)
+r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
+c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)
 
 @app.route('/')
 def index():
@@ -88,7 +89,19 @@ def new(service):
                 line_a = line.split(" ")
                 for port in line_a[1:]:
                     exposed_ports.append(port)
-    container = c.create_container(IMAGE_NAME, ports=exposed_ports)
+    container = []
+    try:
+        image_id = "JUNK"
+        image_id_path = "services/"+service+"/.image_id"
+        with open(image_id_path, 'r') as content_file:
+            image_id = content_file.read()
+        container = c.create_container(image_id, ports=exposed_ports)
+    except:
+        image_id, response = c.build(path="services/"+service+"/docker/", tag=service)
+        image_id_path = "services/"+service+"/.image_id"
+        with open(image_id_path, 'w') as content_file:
+            content_file.write(image_id)
+        container = c.create_container(image_id, ports=exposed_ports)
     container_id = container["Id"]
     c.start(container_id)
     container_port = c.port(container_id, EXPOSED_PORT)
