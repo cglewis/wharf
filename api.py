@@ -7,8 +7,11 @@ from flask import jsonify
 #from docker import client
 
 from os import environ
+from os import listdir
+from os import path
 
 #import redis
+import time
 
 app = Flask(__name__)
 app.debug = True
@@ -38,24 +41,40 @@ app.debug = True
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    row = ""
+    services = listdir("services")
+    for service in services:
+        last_modified = ""
+        last_modified = time.ctime(path.getmtime("services/"+service))
+        description = ""
+        # !! TODO try/except
+        description_path = "services/"+service+"/description.txt"
+        with open(description_path, 'r') as content_file:
+            description = content_file.read()
+        row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td></tr>'
+    row = Markup(row)
+    return render_template("index.html",row=row)
 
 @app.route('/saas/<service>')
 def saas(service):
     about = ""
     body = ""
-    links = ""
+    link = ""
+    link_name = ""
+    # !! TODO try/except
     about_path = "services/"+service+"/html/about.html"
     with open(about_path, 'r') as content_file:
         about = content_file.read()
     body_path = "services/"+service+"/html/body.html"
     with open(body_path, 'r') as content_file:
         body = content_file.read()
-    links_path = "services/"+service+"/html/links.html"
-    with open(links_path, 'r') as content_file:
-        links = content_file.read()
-        # !! TODO break out link and text and multiple links
-    return render_template("saas.html",service=service,about=about,body=body,links=links)
+    link_path = "services/"+service+"/html/link.html"
+    with open(link_path, 'r') as content_file:
+        link = content_file.read()
+        link_a = link.split(" ", 1)
+        link = link_a[0]
+        link_name = link_a[1]
+    return render_template("saas.html",service=service,about=about,body=body,link=link,link_name=link_name)
 
 @app.route('/new', methods=["POST"])
 def new():
@@ -80,6 +99,14 @@ def new():
 def details(url, service):
     client = ""
     test = ""
+    link = ""
+    link_name = ""
+    link_path = "services/"+service+"/html/link.html"
+    with open(link_path, 'r') as content_file:
+        link = content_file.read()
+        link_a = link.split(" ", 1)
+        link = link_a[0]
+        link_name = link_a[1]
     client_path = "services/"+service+"/client/client.txt"
     with open(client_path, 'r') as content_file:
         client = content_file.read()
@@ -88,7 +115,7 @@ def details(url, service):
     test_path = "services/"+service+"/client/"+client_a[1]
     with open(test_path, 'r') as content_file:
         test = content_file.read()
-    return render_template("details.html",url=url,service=service,client=client,test=test)
+    return render_template("details.html",url=url,service=service,client=client,test=test,link=link,link_name=link_name)
 
 @app.route('/robot.txt')
 def robot():
