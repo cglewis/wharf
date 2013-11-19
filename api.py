@@ -21,8 +21,8 @@ app.debug = True
 #set defaults
 
 #IMAGE_NAME = "damien/mongodb"
-#DOMAIN = "domain"
-#HIPACHE_PORT="80"
+DOMAIN = "localhost"
+HIPACHE_PORT="80"
 REDIS_HOST="localhost"
 REDIS_PORT=6379
 DOCKER_HOST="localhost"
@@ -130,20 +130,22 @@ def new(service):
             content_file.write(image_id)
         container = c.create_container(image_id, ports=exposed_ports)
     container_id = container["Id"]
+    #bindings = {}
+    #for exposed_port in exposed_ports:
+    #    port = exposed_port+"/tcp"
+    #    bindings[port] = [{'HostIp': '', 'HostPort': ''}]
+    #c.start(container_id, port_bindings=bindings)
     c.start(container_id)
-    container_port = c.port(container_id, EXPOSED_PORT)
-    r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
-    r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
-    if HIPACHE_PORT == "80":
-        url = "%s:%s" % (DOMAIN, container_port)
-    else:
-        url="%s:%s" % (DOMAIN, container_port)
+    for exposed_port in exposed_ports:
+        container_port = c.port(container_id, exposed_port)
+        r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
+        r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
+        if HIPACHE_PORT == "80":
+            url = "%s:%s" % (DOMAIN, container_port)
+        else:
+            url="%s:%s" % (DOMAIN, container_port)
 
-    return jsonify(
-            url=url,
-            port=container_port,
-            hipache_port=HIPACHE_PORT,
-            id=container_id)
+    return jsonify(url=url)
 
 @app.route('/details/<service>/<url>')
 @requires_auth
@@ -166,7 +168,13 @@ def details(url, service):
     test_path = "services/"+service+"/client/"+client_a[1]
     with open(test_path, 'r') as content_file:
         test = content_file.read()
-    return render_template("details.html",url=url,service=service,client=client,test=test,link=link,link_name=link_name)
+    return render_template("details.html",
+                           url=url,
+                           service=service,
+                           client=client,
+                           test=test,
+                           link=link,
+                           link_name=link_name)
 
 @app.route('/robot.txt')
 @requires_auth
