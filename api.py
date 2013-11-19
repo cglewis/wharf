@@ -140,6 +140,7 @@ def new(service):
         container_port = c.port(container_id, exposed_port)
         r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
         r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
+        # !! TODO more than one url when there is more than one exposed_port
         if HIPACHE_PORT == "80":
             url = "%s:%s" % (DOMAIN, container_port)
         else:
