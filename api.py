@@ -3,6 +3,8 @@ from flask import Markup
 from flask import render_template
 from flask import request
 from flask import jsonify
+from functools import wraps
+from flask import request, Response
 
 from docker import client
 
@@ -40,7 +42,30 @@ DOCKER_HOST="localhost"
 r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
 c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)
 
+def check_auth(username, password):
+    """This function is called to check if a username /
+    password combination is valid.
+    """
+    return username == 'admin' and password == 'secret' 
+
+def authenticate():
+    """Sends a 401 response that enables basic auth"""
+    return Response(
+    'Could not verify your access level for that URL.\n'
+    'You have to login with proper credentials', 401,
+    {'WWW-Authenticate': 'Basic realm="Login Required"'})
+
+def requires_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth = request.authorization
+        if not auth or not check_auth(auth.username, auth.password):
+            return authenticate()
+        return f(*args, **kwargs)
+    return decorated
+
 @app.route('/')
+@requires_auth
 def index():
     row = ""
     services = listdir("services")
@@ -57,6 +82,7 @@ def index():
     return render_template("index.html",row=row)
 
 @app.route('/saas/<service>')
+@requires_auth
 def saas(service):
     about = ""
     body = ""
@@ -78,6 +104,7 @@ def saas(service):
     return render_template("saas.html",service=service,about=about,body=body,link=link,link_name=link_name)
 
 @app.route('/new/<service>', methods=["POST"])
+@requires_auth
 def new(service):
     exposed_ports = []
     # !! TODO try/expect
@@ -119,6 +146,7 @@ def new(service):
             id=container_id)
 
 @app.route('/details/<service>/<url>')
+@requires_auth
 def details(url, service):
     client = ""
     test = ""
@@ -141,6 +169,7 @@ def details(url, service):
     return render_template("details.html",url=url,service=service,client=client,test=test,link=link,link_name=link_name)
 
 @app.route('/robot.txt')
+@requires_auth
 def robot():
     return render_template("robot.html")
 
