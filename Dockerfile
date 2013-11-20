@@ -17,4 +17,5 @@ RUN pip install -r /wharf/requirements.txt
 
 EXPOSE 5000
 
-CMD ["python", "/wharf/api.py"]
+WORKDIR /wharf
+CMD ["python", "api.py"]

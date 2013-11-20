@@ -20,7 +20,6 @@ app.debug = True
 
 #set defaults
 
-#IMAGE_NAME = "damien/mongodb"
 DOMAIN = "localhost"
 HIPACHE_PORT="80"
 REDIS_HOST="localhost"
@@ -29,6 +28,7 @@ DOCKER_HOST="localhost"
 
 #environment variables, must be set in order for application to function
 #try:
+#    DOMAIN=environ["DOMAIN"]
 #    REDIS_PORT=environ["REDIS_PORT"]
 #    REDIS_HOST=environ["REDIS_HOST"]
 #    HIPACHE_PORT=environ["HIPACHE_PORT"]
