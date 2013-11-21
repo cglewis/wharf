@@ -1,5 +1,5 @@
 from ubuntu
-MAINTAINER Charlie Lewis <charliel@lab41.org>
+MAINTAINER Charlie Lewis <charlie.lewis42@gmail.com>
 
 ENV REFRESHED_AT 2013-11-17
 RUN sed 's/main$/main universe/' -i /etc/apt/sources.list
