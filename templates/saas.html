@@ -8,7 +8,9 @@
         <link href="/static/css/bootstrap.css" rel="stylesheet">
         <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="/static/css/ladda-themeless.min.css" rel="stylesheet">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
+        <script src="/static/js/bootstrap.js"></script>
 
         <title>Try {{ service }}</title>
     </head>
@@ -30,7 +32,7 @@
             <div class="jubotron">
                 <h1>Want to try {{ service }}?</h1>
                 <p class="lead">{{ body }}</p>
-                <a id="button" class="btn btn-large btn-success">Try {{ service }} now</a>
+                <a id="button" class="btn btn-large btn-success" data-loading-text="Loading...">Try {{ service }} now</a>
             </div>
 
             <hr>
