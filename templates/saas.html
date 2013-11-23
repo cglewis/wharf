@@ -67,6 +67,7 @@
             e.preventDefault();
             var l = Ladda.create(this);
             l.start();
+            $("span", this).text("Building...");
             $.ajax({
                 url: '/new/{{ service }}',
                 type: 'POST',
