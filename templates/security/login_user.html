@@ -5,16 +5,14 @@
         <meta name="description" content="">
         <meta name="author" content="">
 
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
         <link href="/static/css/bootstrap.css" rel="stylesheet">
+        <link href="/static/css/jasny-bootstrap.css" rel="stylesheet">
         <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-        <link href="/static/css/ladda-themeless.min.css" rel="stylesheet">
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script> 
         <script src="/static/js/bootstrap.js"></script>
-        <script src="/static/js/spin.min.js"></script>
-        <script src="/static/js/ladda.min.js"></script>
 
-        <title>Try {{ service }}</title>
+        <title>Wharf</title>
     </head>
 
     <body>
@@ -22,39 +20,57 @@
             <!-- nav -->
             <div class="masthead">
                 <ul class="nav nav-pills pull-right">
-                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
                     <li><a href="http://docker.io">Docker</a></li>
-                    <li><a href="{{ link }}">{{ link_name }}</a></li>
                     {% if current_user.is_authenticated() %}
                       <li><a href="{{ url_for('security.logout') }}">Logout</a></li>
                     {% else %}
                       <li><a href="{{ url_for('security.login') }}">Login</a></li>
                     {% endif %}
                 </ul>
-                <h3 class="muted">{{ service }}</h3>
+                <h3 class="muted">Wharf</h3>
             </div>
 
             <hr>
 
             <div class="jubotron">
-                <h1>Want to try {{ service }}?</h1>
-                <p class="lead">{{ body }}</p>
-                <a id="button" class="btn btn-large btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label">Try {{ service }} now</span></a>
-            </div>
-
-            <hr>
-
-            <div class="row-fluid marketing">
-                <div class="span12 well">
-                    <h4>About <a href="{{ link }}">{{ link_name }}</a></h4>
-                    <p>{{ about }}</p>
+              <div class="span6 well">
+                <div class="row">
+                  <div class="col-md-6 col-md-offset-4">
+                    <h1>Wharf Login</h1>
+                  </div>
                 </div>
+                <div class="row">
+                  <div class="col-md-5 col-md-offset-4">
+                    {% from "security/_macros.html" import render_field_with_errors, render_field %}
+
+                    {% block content %}
+                    {% include "security/_messages.html" %}
+
+                    <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+                      {{ login_user_form.hidden_tag() }}
+                      {{ render_field_with_errors(login_user_form.email) }}
+                      {{ render_field_with_errors(login_user_form.password) }}
+                      {{ render_field_with_errors(login_user_form.remember) }}
+                      {{ render_field(login_user_form.next) }}
+                      {{ render_field(login_user_form.submit) }}
+                    </form>
+                    <ul class="nav nav-pills nav-stacked">
+                      <li><a href="/register">Register</a></li>
+                      <li><a href="/reset">Forgot Password</a></li>
+                      <li><a href="/confirm">Confirm Account</a></li>
+                    </ul>
+                    {% endblock %}
+                  </div>
+                </div>
+              </div>            
             </div>
 
             <div class="footer">
                 <div class="row-fluid marketing">
                     <div class="span3 well">
-                        <p>Powered by <a href="http://docker.io">Docker</a>.</p>
+                        <p>Powered by <a href="http://docker.io">Docker</a>.</p> 
                     </div>
                     <div class="span5 well">
                         <p class="muted credit">&copy; Charlie Lewis 2013 | <a href="mailto:charlie.lewis42@gmail.com">Contact Me</a> | <a href="https://github.com/cglewis">GitHub</a> | <a href="http://www.linkedin.com/pub/charles-lewis/8/a9/64a">LinkedIn</a>
@@ -66,29 +82,5 @@
             </div>
         </div> <!-- /container -->
     </body>
-
-    <script type="text/javascript">
-        $("#button").click(function(e) {
-            e.preventDefault();
-            var l = Ladda.create(this);
-            l.start();
-            $("span", this).text("Building...");
-            $.ajax({
-                url: '/new/{{ service }}',
-                type: 'POST',
-                dataType: 'json'
-                }).done(function(response) {
-                    console.log(response);
-                    window.location = build_url(response);
-                });
-            });
-
-        function build_url(response) {
-            pathArray = window.location.href.split( '/' );
-            protocol = pathArray[0];
-            host = pathArray[2];
-            url = protocol + '//' + host + "/details/{{ service }}/" + response.url;
-            return url;
-        }
-    </script>
 </html>
+

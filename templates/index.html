@@ -23,6 +23,11 @@
                     <li class="active"><a href="#">Home</a></li>
                     <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
                     <li><a href="http://docker.io">Docker</a></li>
+                    {% if current_user.is_authenticated() %}
+                      <li><a href="{{ url_for('security.logout') }}">Logout</a></li>
+                    {% else %}
+                      <li><a href="{{ url_for('security.login') }}">Login</a></li>
+                    {% endif %}
                 </ul>
                 <h3 class="muted">Wharf</h3>
             </div>
