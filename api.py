@@ -35,6 +35,7 @@ app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 # this should re-generated for production use
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
+app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
 app.config.from_object('config.email')
 app.debug = True
 
