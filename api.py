@@ -31,6 +31,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/db.sqlite'
 app.config['DEFAULT_MAIL_SENDER'] = 'dockerwharf@gmail.com'
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = True
+app.config['SECURITY_CHANGEABLE'] = True
 app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 # this should re-generated for production use
