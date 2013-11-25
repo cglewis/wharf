@@ -2,9 +2,11 @@ from flask import Flask
 from flask import Markup
 from flask import Response
 from flask import jsonify
+from flask import redirect
 from flask import render_template
 from flask import request
 from flask import session
+from flask import url_for
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -13,6 +15,7 @@ from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.security import UserMixin
 from flask.ext.security import RoleMixin
 from functools import wraps
+from werkzeug import secure_filename
 
 from docker import client
 
@@ -22,6 +25,8 @@ from os import path
 
 import redis
 import time
+
+UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -37,6 +42,7 @@ app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 # this should re-generated for production use
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object('config.email')
 app.debug = True
 
@@ -133,9 +139,23 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
-@app.route('/')
-@requires_auth
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        try:
+            # !! TODO
+            #    process url if that was entered instead
+            #url = request.form['wharf_url']
+            file = request.files['file']
+            if file:
+                filename = secure_filename(file.filename)
+                file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
+                # !! TODO
+                #    some post-processing once the file is uploaded
+        except:
+            print "No file selected"
+        return redirect(url_for('index'))
+
     row = ""
     services = listdir("services")
     for service in services:
