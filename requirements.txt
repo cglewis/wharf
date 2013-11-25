@@ -6,4 +6,4 @@ flask-babel
 flask-mail
 flask-sqlalchemy
 flask-security
-
+sh

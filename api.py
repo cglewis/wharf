@@ -18,6 +18,7 @@ from functools import wraps
 from werkzeug import secure_filename
 
 from docker import client
+from sh import git
 
 from os import environ
 from os import listdir
@@ -28,6 +29,13 @@ import tarfile
 import time
 import zipfile
 
+#set defaults
+
+DOMAIN = "localhost"
+HIPACHE_PORT="80"
+REDIS_HOST="localhost"
+REDIS_PORT=6379
+DOCKER_HOST="localhost"
 ALLOWED_EXTENSIONS = set(['gz', 'zip'])
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 SERVICE_DICT = {'description':'description.txt',
@@ -37,39 +45,7 @@ SERVICE_DICT = {'description':'description.txt',
                 'link':'html/link.html',
                 'dockerfile':'docker/Dockerfile'}
 
-app = Flask(__name__)
-app.config['DEBUG'] = True
-# this should re-generated for production use
-app.config['SECRET_KEY'] = 'EckNi2Fluincawd+'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/db.sqlite'
-app.config['DEFAULT_MAIL_SENDER'] = 'dockerwharf@gmail.com'
-app.config['SECURITY_REGISTERABLE'] = True
-app.config['SECURITY_CONFIRMABLE'] = True
-app.config['SECURITY_CHANGEABLE'] = True
-app.config['SECURITY_RECOVERABLE'] = True
-app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
-# this should re-generated for production use
-app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
-app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config.from_object('config.email')
-app.debug = True
-
-# Setup mail extension
-mail = Mail(app)
-
-# Setup babel
-babel = Babel(app)
-
-#set defaults
-
-DOMAIN = "localhost"
-HIPACHE_PORT="80"
-REDIS_HOST="localhost"
-REDIS_PORT=6379
-DOCKER_HOST="localhost"
-
-#environment variables, must be set in order for application to function
+# environment variables, must be set in order for application to function
 #try:
 #    DOMAIN=environ["DOMAIN"]
 #    REDIS_PORT=environ["REDIS_PORT"]
@@ -85,6 +61,33 @@ DOCKER_HOST="localhost"
 r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
 c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)
 
+app = Flask(__name__)
+app.config['DEBUG'] = True
+# this should be re-generated for production use
+app.config['SECRET_KEY'] = 'EckNi2Fluincawd+'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/db.sqlite'
+app.config['DEFAULT_MAIL_SENDER'] = 'dockerwharf@gmail.com'
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_CONFIRMABLE'] = True
+app.config['SECURITY_CHANGEABLE'] = True
+app.config['SECURITY_RECOVERABLE'] = True
+app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
+# this should be re-generated for production use
+app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
+app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config.from_object('config.email')
+app.debug = True
+
+# Setup mail extension
+mail = Mail(app)
+
+# Setup babel
+babel = Babel(app)
+
+# Create database connection object
+db = SQLAlchemy(app)
+
 @babel.localeselector
 def get_locale():
     override = request.args.get('lang')
@@ -94,9 +97,6 @@ def get_locale():
 
     rv = session.get('lang', 'en')
     return rv
-
-# Create database connection object
-db = SQLAlchemy(app)
 
 # Define models
 roles_users = db.Table('roles_users',
@@ -153,42 +153,62 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
+@requires_auth
 def index():
     if request.method == 'POST':
+        url = ""
+        file = ""
         try:
-            # !! TODO
-            #    process url if that was entered instead
-            #url = request.form['wharf_url']
-            file = request.files['file']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
-                if filename.rsplit('.', 1)[1] == "zip":
-                    with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
-                        service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
-                        # check for existence of necessary files
-                        for key,value in SERVICE_DICT.items():
-                            print value
-                            print path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)
-                            print path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0],  value))
-                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)):
-                                # !! TODO make this better
-                                return render_template("failed.html")
-
-                elif filename.rsplit('.', 1)[1] == "gz":
-                    with tarfile.open(path.join(app.config['UPLOAD_FOLDER'], filename)) as service_gz:
-                        service_gz.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
-                        # check for existence of necessary files
-                        for key,value in SERVICE_DICT.items():
-                            print value
-                            print path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)
-                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)):
-                                # !! TODO make this better
-                                return render_template("failed.html")
-                # !! TODO
-                #    some post-processing once the file is uploaded
+            url = request.form['wharf_url']
         except:
-            print "No file selected"
+            url = ""
+        try:
+            file = request.files['file']
+        except:
+            file = ""
+        if file != "":
+            try:
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
+                    if filename.rsplit('.', 1)[1] == "zip":
+                        with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
+                            service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
+                            # check for existence of necessary files
+                            for key,value in SERVICE_DICT.items():
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)):
+                                    # !! TODO make this better
+                                    return render_template("failed.html")
+
+                    elif filename.rsplit('.', 1)[1] == "gz":
+                        with tarfile.open(path.join(app.config['UPLOAD_FOLDER'], filename)) as service_gz:
+                            service_gz.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+                            # check for existence of necessary files
+                            for key,value in SERVICE_DICT.items():
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)):
+                                    # !! TODO make this better
+                                    return render_template("failed.html")
+                    else:
+                        return render_template("failed.html")
+                    # !! TODO
+                    #    some post-processing once the file is uploaded
+                else:
+                    return render_template("failed.html")
+            except:
+                print "No file selected"
+        elif url != "":
+            try:
+                # !! TODO
+                if url:
+                    # !! TODO try/except
+                    if url.rsplit('.', 1)[1] == "git":
+                        git.clone(url, path.join(app.config['UPLOAD_FOLDER'], (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                    else:
+                        print url
+            except:
+                print "Bad URL"
+        else:
+            return render_template("failed.html")
         return redirect(url_for('index'))
 
     row = ""
