@@ -30,6 +30,12 @@ import zipfile
 
 ALLOWED_EXTENSIONS = set(['gz', 'zip'])
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
+SERVICE_DICT = {'description':'description.txt',
+                'client':'client/client.txt',
+                'about':'html/about.html',
+                'body':'html/body.html',
+                'link':'html/link.html',
+                'dockerfile':'docker/Dockerfile'}
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -157,13 +163,30 @@ def index():
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
-                # !! TODO
-                #    some post-processing once the file is uploaded
                 if filename.rsplit('.', 1)[1] == "zip":
                     with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
-                        service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0])) 
+                        service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
+                        # check for existence of necessary files
+                        for key,value in SERVICE_DICT.items():
+                            print value
+                            print path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)
+                            print path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0],  value))
+                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)):
+                                # !! TODO make this better
+                                return render_template("failed.html")
+
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with tarfile.open(path.join(app.config['UPLOAD_FOLDER'], filename)) as service_gz:
+                        service_gz.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+                        # check for existence of necessary files
+                        for key,value in SERVICE_DICT.items():
+                            print value
+                            print path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)
+                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)):
+                                # !! TODO make this better
+                                return render_template("failed.html")
                 # !! TODO
-                #    elif tarfile
+                #    some post-processing once the file is uploaded
         except:
             print "No file selected"
         return redirect(url_for('index'))
@@ -252,6 +275,7 @@ def new(service):
 @app.route('/details/<service>/<url>')
 @requires_auth
 def details(url, service):
+    # !! TODO try/except
     client = ""
     test = ""
     link = ""
