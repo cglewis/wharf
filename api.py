@@ -24,8 +24,11 @@ from os import listdir
 from os import path
 
 import redis
+import tarfile
 import time
+import zipfile
 
+ALLOWED_EXTENSIONS = set(['gz', 'zip'])
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 
 app = Flask(__name__)
@@ -139,6 +142,10 @@ def requires_auth(f):
         return f(*args, **kwargs)
     return decorated
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -147,11 +154,16 @@ def index():
             #    process url if that was entered instead
             #url = request.form['wharf_url']
             file = request.files['file']
-            if file:
+            if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
                 # !! TODO
                 #    some post-processing once the file is uploaded
+                if filename.rsplit('.', 1)[1] == "zip":
+                    with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
+                        service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0])) 
+                # !! TODO
+                #    elif tarfile
         except:
             print "No file selected"
         return redirect(url_for('index'))
