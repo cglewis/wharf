@@ -19,10 +19,13 @@ from werkzeug import secure_filename
 
 from docker import client
 from sh import git
+from sh import mv
 
 from os import environ
 from os import listdir
 from os import path
+from os import remove
+from os import rmdir
 
 import redis
 import tarfile
@@ -38,6 +41,7 @@ REDIS_PORT=6379
 DOCKER_HOST="localhost"
 ALLOWED_EXTENSIONS = set(['gz', 'zip'])
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
+SERVICES_FOLDER = '/home/vagrant/wharf/services/'
 SERVICE_DICT = {'description':'description.txt',
                 'client':'client/client.txt',
                 'about':'html/about.html',
@@ -76,6 +80,7 @@ app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SERVICES_FOLDER'] = SERVICES_FOLDER
 app.config.from_object('config.email')
 app.debug = True
 
@@ -173,21 +178,109 @@ def index():
                     file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
                     if filename.rsplit('.', 1)[1] == "zip":
                         with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
-                            service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
+                            service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'],
+                                                             filename.rsplit('.', 1)[0]))
+                            # !! TODO
+                            #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
                             for key,value in SERVICE_DICT.items():
-                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0], filename.rsplit('.', 1)[0], value)):
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                             filename.rsplit('.', 1)[0],
+                                                             filename.rsplit('.', 1)[0],
+                                                             value)):
                                     # !! TODO make this better
+                                    #         render a form to fill out the missing metadata
                                     return render_template("failed.html")
+                            # move to services folder
+                            i = 0
+                            while i != -1:
+                                try:
+                                    if i == 0:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     filename.rsplit('.', 1)[0]),
+                                           app.config['SERVICES_FOLDER'])
+                                    elif i == 1:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     filename.rsplit('.', 1)[0], 
+                                                     filename.rsplit('.', 1)[0]), 
+                                           path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     (filename.rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     (filename.rsplit('.', 1)[0])+str(i)), 
+                                           app.config['SERVICES_FOLDER'])
+                                    else:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     (filename.rsplit('.', 1)[0])+str(i-1)), 
+                                           path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     (filename.rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 1)[0], 
+                                                     (filename.rsplit('.', 1)[0])+str(i)), 
+                                           app.config['SERVICES_FOLDER'])
+                                    i = -1
+                                except:
+                                    i += 1
+                            # remove leftover files in tmp
+                            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+                            rmdir(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
 
                     elif filename.rsplit('.', 1)[1] == "gz":
                         with tarfile.open(path.join(app.config['UPLOAD_FOLDER'], filename)) as service_gz:
-                            service_gz.extractall(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+                            service_gz.extractall(path.join(app.config['UPLOAD_FOLDER'],
+                                                            filename.rsplit('.', 2)[0]))
+                            # !! TODO
+                            #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
                             for key,value in SERVICE_DICT.items():
-                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0], filename.rsplit('.', 2)[0], value)):
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                             filename.rsplit('.', 2)[0],
+                                                             filename.rsplit('.', 2)[0],
+                                                             value)):
                                     # !! TODO make this better
+                                    #         render a form to fill out the missing metadata
                                     return render_template("failed.html")
+                            # move to services folder
+                            i = 0
+                            while i != -1:
+                                try:
+                                    if i == 0:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     filename.rsplit('.', 2)[0],
+                                                     filename.rsplit('.', 2)[0]),
+                                           app.config['SERVICES_FOLDER'])
+                                    elif i == 1:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     filename.rsplit('.', 2)[0], 
+                                                     filename.rsplit('.', 2)[0]), 
+                                           path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 2)[0], 
+                                                     (filename.rsplit('.', 2)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     filename.rsplit('.', 2)[0], 
+                                                     (filename.rsplit('.', 2)[0])+str(i)), 
+                                           app.config['SERVICES_FOLDER'])
+                                    else:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 2)[0], 
+                                                     (filename.rsplit('.', 2)[0])+str(i-1)), 
+                                           path.join(app.config['UPLOAD_FOLDER'],
+                                                     filename.rsplit('.', 2)[0], 
+                                                     (filename.rsplit('.', 2)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     filename.rsplit('.', 2)[0], 
+                                                     (filename.rsplit('.', 2)[0])+str(i)), 
+                                           app.config['SERVICES_FOLDER'])
+                                    i = -1
+                                except:
+                                    i += 1
+                            # remove leftover files in tmp
+                            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+                            rmdir(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
                     else:
                         return render_template("failed.html")
                     # !! TODO
@@ -202,7 +295,30 @@ def index():
                 if url:
                     # !! TODO try/except
                     if url.rsplit('.', 1)[1] == "git":
-                        git.clone(url, path.join(app.config['UPLOAD_FOLDER'], (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                        # !! TODO try/except - if the folder already exists
+                        git.clone(url, path.join(app.config['UPLOAD_FOLDER'],
+                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                        # !! TODO
+                        #    allow exception for dockerfile, check at root as well
+                        for key,value in SERVICE_DICT.items():
+                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                         (url.rsplit('/', 1)[1]).rsplit('.', 1)[0], value)):
+                                # !! TODO make this better
+                                #         render a form to fill out the missing metadata
+                                print path.join(app.config['UPLOAD_FOLDER'],
+                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0], value),"failed",value
+                                return render_template("failed.html")
+                            else:
+                                print "found",value
+                        # !! TODO check for metadata files
+                        # !! TODO check if the service already exists
+                        # move to services folder
+                        # !! TODO needs to be fixed
+                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]), 
+                           path.join(app.config['SERVICES_FOLDER'],
+                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0])) 
+                        # !! TODO build in the background
                     else:
                         print url
             except:
@@ -268,6 +384,7 @@ def new(service):
             image_id = content_file.read()
         container = c.create_container(image_id, ports=exposed_ports)
     except:
+        # !! TODO try/except
         image_id, response = c.build(path="services/"+service+"/docker/", tag=service)
         image_id_path = "services/"+service+"/.image_id"
         with open(image_id_path, 'w') as content_file:
