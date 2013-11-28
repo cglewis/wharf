@@ -40,6 +40,30 @@
                 <h1>Let's get started with Wharf!</h1>
                 <p class="lead">Try one of the services already available below on Wharf, or add your own service in the form of a Dockerfile and some additional metadata, see some example templates <a href="https://github.com/cglewis/wharf-services-example">here</a>.</p>
                 <div class="span6">
+                  <form action="#" method="get">
+                    <div class="input-group">
+                      <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
+                      <input class="form-control" id="system-search" name="q" placeholder="Search for" required>
+                      <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default">
+                          <i class="glyphicon glyphicon-search"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </form>
+                </div>
+                <table class="table table-striped table-bordered table-hover table-list-search">
+                  <thead>
+                    <tr><th>Service</th><th>Description</th><th>Last Updated</th></tr>
+                  </thead>
+                  <tbody data-link="row" class="rowlink">
+                    {{ row }}
+                  </tbody>
+                </table>
+
+                <hr>
+
+                <div class="span6">
                   <form action="" method="post" id="wharf_url_form" name="mc-embedded-subscribe-form" class="validate" novalidate>
                     <div class="input-group">
                       <input type="text" value="" placeholder="Wharf URL" name="wharf_url" class="required email form-control" id="mce-EMAIL">
@@ -59,17 +83,7 @@
                   </div>
                     </form>
                 </div>
-                <table class="table table-striped table-bordered table-hover">
-                  <thead>
-                    <tr><th>Service</th><th>Description</th><th>Last Updated</th></tr>
-                  </thead>
-                  <tbody data-link="row" class="rowlink">
-                    {{ row }}
-                  </tbody>
-                </table>
             </div>
-
-            <hr>
 
             <div class="row-fluid marketing">
                 <div class="span6 well">
@@ -98,4 +112,52 @@
             </div>
         </div> <!-- /container -->
     </body>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var activeSystemClass = $('.list-group-item.active');
+
+            //something is entered in search form
+            $('#system-search').keyup( function() {
+                var that = this;
+                // affect all table rows on in systems table
+                var tableBody = $('.table-list-search tbody');
+                var tableRowsClass = $('.table-list-search tbody tr');
+                $('.search-sf').remove();
+                tableRowsClass.each( function(i, val) {
+        
+                    //Lower text for case insensitive
+                    var rowText = $(val).text().toLowerCase();
+                    var inputText = $(that).val().toLowerCase();
+                    if(inputText != '')
+                    {
+                        $('.search-query-sf').remove();
+                        tableBody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>Searching for: "'
+                            + $(that).val()
+                            + '"</strong></td></tr>');
+                    }
+                    else
+                    {
+                        $('.search-query-sf').remove();
+                    }
+
+                    if( rowText.indexOf( inputText ) == -1 )
+                    {
+                        //hide rows
+                        tableRowsClass.eq(i).hide();
+                
+                    }
+                    else
+                    {
+                        $('.search-sf').remove();
+                        tableRowsClass.eq(i).show();
+                    }
+                });
+                //all tr elements are hidden
+                if(tableRowsClass.children(':visible').length == 0)
+                {
+                    tableBody.append('<tr class="search-sf"><td class="text-muted" colspan="6">No entries found.</td></tr>');
+                }
+            });
+        });
+    </script>
 </html>
