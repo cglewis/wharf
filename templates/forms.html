@@ -15,7 +15,7 @@
         <script src="/static/js/spin.min.js"></script>
         <script src="/static/js/ladda.min.js"></script>
 
-        <title>Try {{ service }}</title>
+        <title>Wharf</title>
     </head>
 
     <body>
@@ -38,19 +38,12 @@
             <hr>
 
             <div class="jubotron">
-                <h1>Want to try {{ service }}?</h1>
-                <p class="lead">{{ body }}</p>
-                <a id="button" class="btn btn-large btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label">Try {{ service }} now</span></a>
+                <br />
+                <h3>Some files were missing from your service...</h3>
+                <a id="button" class="btn btn-large btn-danger ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label">Fix something</span></a>
             </div>
 
             <hr>
-
-            <div class="row-fluid marketing">
-                <div class="span12 well">
-                    <h4>About <a href="{{ link }}">{{ link_name }}</a></h4>
-                    <p>{{ about }}</p>
-                </div>
-            </div>
 
             <div class="footer">
                 <div class="row-fluid marketing">
@@ -67,29 +60,4 @@
             </div>
         </div> <!-- /container -->
     </body>
-
-    <script type="text/javascript">
-        $("#button").click(function(e) {
-            e.preventDefault();
-            var l = Ladda.create(this);
-            l.start();
-            $("span", this).text("Building...");
-            $.ajax({
-                url: '/new/{{ service }}',
-                type: 'POST',
-                dataType: 'json'
-                }).done(function(response) {
-                    console.log(response);
-                    window.location = build_url(response);
-                });
-            });
-
-        function build_url(response) {
-            pathArray = window.location.href.split( '/' );
-            protocol = pathArray[0];
-            host = pathArray[2];
-            url = protocol + '//' + host + "/details/{{ service }}/" + response.url;
-            return url;
-        }
-    </script>
 </html>

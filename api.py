@@ -5,6 +5,7 @@ from flask import jsonify
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import send_from_directory
 from flask import session
 from flask import url_for
 from flask.ext.babel import Babel
@@ -439,8 +440,17 @@ def details(url, service):
                            link=link,
                            link_name=link_name)
 
-@app.route('/robot.txt')
+@app.route('/forms')
 @requires_auth
+def forms():
+    return render_template("forms.html")
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(path.join(app.root_path, 'static'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/robot.txt')
 def robot():
     return render_template("robot.html")
 
