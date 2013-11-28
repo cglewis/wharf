@@ -21,6 +21,7 @@
                 <ul class="nav nav-pills pull-right">
                     <li class="active"><a href="/">Home</a></li>
                     <li><a href="{{ link }}">{{ link_name }}</a></li>
+                    <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
                     <li><a href="http://docker.io">Docker</a></li>
                     {% if current_user.is_authenticated() %}
                       <li><a href="{{ url_for('security.logout') }}">Logout</a></li>
