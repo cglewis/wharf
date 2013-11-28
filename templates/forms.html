@@ -9,11 +9,8 @@
         <link href="/static/css/bootstrap.css" rel="stylesheet">
         <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-        <link href="/static/css/ladda-themeless.min.css" rel="stylesheet">
         <script src="/static/js/jquery-1.10.1.min.js"></script>
         <script src="/static/js/bootstrap.js"></script>
-        <script src="/static/js/spin.min.js"></script>
-        <script src="/static/js/ladda.min.js"></script>
 
         <title>Wharf</title>
     </head>
@@ -40,8 +37,162 @@
             <div class="jubotron">
                 <br />
                 <h3>Some files were missing from your service...</h3>
-                <a id="button" class="btn btn-large btn-danger ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label">Fix something</span></a>
+                <hr>
+                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalDescription">
+                    Fill in missing Description
+                </button>
+                <br /><br />
+                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalClient">
+                    Fill in missing Client
+                </button>
+                <br /><br />
+                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalAbout">
+                    Fill in missing About
+                </button>
+                <br /><br />
+                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalBody">
+                    Fill in missing Body
+                </button>
+                <br /><br />
+                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalLink">
+                    Fill in missing Link
+                </button>
             </div>
+
+            <!-- Modal Description -->
+            <div class="modal fade" id="modalDescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <textarea id="textareaDescription" class="form-control" placeholder="Content" rows="5" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="buttonDescription" type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Modal Client -->
+            <div class="modal fade" id="modalClient" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <textarea id="textareaClient" class="form-control" placeholder="Content" rows="5" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="buttonClient" type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Modal About -->
+            <div class="modal fade" id="modalAbout" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <textarea id="textareaAbout" class="form-control" placeholder="Content" rows="5" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="buttonAbout" type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Modal Body -->
+            <div class="modal fade" id="modalBody" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <textarea id="textareaBody" class="form-control" placeholder="Content" rows="5" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="buttonBody" type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Modal Link -->
+            <div class="modal fade" id="modalLink" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <textarea id="textareaLink" class="form-control" placeholder="Content" rows="5" required></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="buttonLink" type="button" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
 
             <hr>
 
@@ -60,4 +211,35 @@
             </div>
         </div> <!-- /container -->
     </body>
+    <script type="text/javascript">
+        $("#buttonDescription").click(function(e) {
+            e.preventDefault();
+            console.log(document.getElementById('textareaDescription').value);
+            $('#modalDescription').modal('toggle');
+        });
+
+        $("#buttonClient").click(function(e) {
+            e.preventDefault();
+            console.log(document.getElementById('textareaClient').value);
+            $('#modalClient').modal('toggle');
+        });
+
+        $("#buttonAbout").click(function(e) {
+            e.preventDefault();
+            console.log(document.getElementById('textareaAbout').value);
+            $('#modalAbout').modal('toggle');
+        });
+
+        $("#buttonBody").click(function(e) {
+            e.preventDefault();
+            console.log(document.getElementById('textareaBody').value);
+            $('#modalBody').modal('toggle');
+        });
+
+        $("#buttonLink").click(function(e) {
+            e.preventDefault();
+            console.log(document.getElementById('textareaLink').value);
+            $('#modalLink').modal('toggle');
+        });
+    </script>
 </html>
