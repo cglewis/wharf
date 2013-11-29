@@ -41,7 +41,7 @@
             <div class="jubotron">
                 <h1>Want to try {{ service }}?</h1>
                 <p class="lead">{{ body }}</p>
-                <a id="button" class="btn btn-large btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label">Try {{ service }} now</span></a>
+                <a id="button" class="btn btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label"><p id="btnText">Try {{ service }} now</p></span></a>
             </div>
 
             <hr>
@@ -74,7 +74,7 @@
             e.preventDefault();
             var l = Ladda.create(this);
             l.start();
-            $("span", this).text("Building...");
+            $("#btnText").text("Building...");
             $.ajax({
                 url: '/new/{{ service }}',
                 type: 'POST',
