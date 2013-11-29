@@ -335,7 +335,7 @@ def index():
         last_modified = time.ctime(path.getmtime("services/"+service))
         description = ""
         # !! TODO try/except
-        description_path = "services/"+service+"/description.txt"
+        description_path = "services/"+service+"/"+SERVICE_DICT['description']
         with open(description_path, 'r') as content_file:
             description = content_file.read()
         row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td></tr>'
@@ -350,13 +350,13 @@ def saas(service):
     link = ""
     link_name = ""
     # !! TODO try/except
-    about_path = "services/"+service+"/html/about.html"
+    about_path = "services/"+service+"/"+SERVICE_DICT['about']
     with open(about_path, 'r') as content_file:
         about = content_file.read()
-    body_path = "services/"+service+"/html/body.html"
+    body_path = "services/"+service+"/"+SERVICE_DICT['body']
     with open(body_path, 'r') as content_file:
         body = content_file.read()
-    link_path = "services/"+service+"/html/link.html"
+    link_path = "services/"+service+"/"+SERVICE_DICT['link']
     with open(link_path, 'r') as content_file:
         link = content_file.read()
     link_a = link.split(" ", 1)
@@ -369,7 +369,7 @@ def saas(service):
 def new(service):
     exposed_ports = []
     # !! TODO try/expect
-    dockerfile = "services/"+service+"/docker/Dockerfile"
+    dockerfile = "services/"+service+"/"+SERVICE_DICT['dockerfile']
     with open(dockerfile, 'r') as content_file:
         for line in content_file:
             if line.startswith("EXPOSE"):
@@ -418,13 +418,13 @@ def details(url, service):
     test = ""
     link = ""
     link_name = ""
-    link_path = "services/"+service+"/html/link.html"
+    link_path = "services/"+service+"/"+SERVICE_DICT['link']
     with open(link_path, 'r') as content_file:
         link = content_file.read()
     link_a = link.split(" ", 1)
     link = link_a[0]
     link_name = link_a[1]
-    client_path = "services/"+service+"/client/client.txt"
+    client_path = "services/"+service+"/"+SERVICE_DICT['client']
     with open(client_path, 'r') as content_file:
         client = content_file.read()
     client_a = client.split("\n")
