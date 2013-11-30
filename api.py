@@ -184,14 +184,20 @@ def index():
                             # !! TODO
                             #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
+                            missing_files = {}
                             for key,value in SERVICE_DICT.items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              filename.rsplit('.', 1)[0],
                                                              filename.rsplit('.', 1)[0],
                                                              value)):
-                                    # !! TODO make this better
-                                    #         render a form to fill out the missing metadata
+                                    missing_files[key] = value
+
+                            if missing_files:
+                                if "dockerfile" in missing_files:
                                     return render_template("failed.html")
+                                else:
+                                    return render_template("forms.html", missing_files=missing_files)
+
                             # move to services folder
                             i = 0
                             while i != -1:
@@ -237,14 +243,20 @@ def index():
                             # !! TODO
                             #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
+                            missing_files = {}
                             for key,value in SERVICE_DICT.items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              filename.rsplit('.', 2)[0],
                                                              filename.rsplit('.', 2)[0],
                                                              value)):
-                                    # !! TODO make this better
-                                    #         render a form to fill out the missing metadata
+                                    missing_files[key] = value
+
+                            if missing_files:
+                                if "dockerfile" in missing_files:
                                     return render_template("failed.html")
+                                else:
+                                    return render_template("forms.html", missing_files=missing_files)
+
                             # move to services folder
                             i = 0
                             while i != -1:
@@ -440,10 +452,15 @@ def details(url, service):
                            link=link,
                            link_name=link_name)
 
-@app.route('/forms')
+@app.route('/forms', methods=['POST'])
 @requires_auth
 def forms():
-    return render_template("forms.html")
+    # !! TODO try/except
+    description = request.json['description']
+    # !! TODO
+    #    write results to files that are missing
+    print description
+    return render_template("index.html")
 
 @app.route('/favicon.ico')
 def favicon():

@@ -37,25 +37,16 @@
                 <br />
                 <h3>Some files were missing from your service...</h3>
                 <hr>
-                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalDescription">
-                    Missing Description
+                {% for key,value in missing_files.iteritems() %}
+                <button id="btn{{key.capitalize()}}" class="btn btn-large btn-danger" data-toggle="modal" data-target="#modal{{key.capitalize()}}">
+                    Missing {{ key.capitalize() }}
                 </button>
                 <br /><br />
-                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalClient">
-                    Missing Client
-                </button>
+                {% endfor %} 
+                <div class="col-md-2 pull-right">
+                    <button class="btn btn-large btn-primary">Finished</button>
+                </div>
                 <br /><br />
-                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalAbout">
-                    Missing About
-                </button>
-                <br /><br />
-                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalBody">
-                    Missing Body
-                </button>
-                <br /><br />
-                <button class="btn btn-large btn-danger" data-toggle="modal" data-target="#modalLink">
-                    Missing Link
-                </button>
             </div>
 
             <!-- Modal Description -->
@@ -219,34 +210,99 @@
     <script type="text/javascript">
         $("#buttonDescription").click(function(e) {
             e.preventDefault();
-            console.log(document.getElementById('textareaDescription').value);
+            var desc = '{"description":"'+document.getElementById('textareaDescription').value+'"}'
+            $('#btnDescription').text('Change Description');
+            $('#btnDescription').toggleClass('btn-danger', false);
+            $('#btnDescription').toggleClass('btn-success', true);
             $('#modalDescription').modal('toggle');
+            $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/forms",
+              dataType: "json",
+              data: desc,
+              success: function (data) {
+                console.log(data.description);
+              }
+            });
         });
 
         $("#buttonClient").click(function(e) {
             e.preventDefault();
-            console.log(document.getElementById('clientLanguage').value);
-            console.log(document.getElementById('clientFilename').value);
-            console.log(document.getElementById('textareaClient').value);
+            var client = '{"client":"'+document.getElementById('textareaClient').value+'","clientLanguage":"'+document.getElementById('clientLanguage').value+'","clientFilename":"'+document.getElementById('clientFilename').value+'"}'
+            $('#btnClient').text('Change Client');
+            $('#btnClient').toggleClass('btn-danger', false);
+            $('#btnClient').toggleClass('btn-success', true);
             $('#modalClient').modal('toggle');
+            $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/forms",
+              dataType: "json",
+              data: client,
+              success: function (data) {
+                console.log(data.client);
+                console.log(data.clientLanguage);
+                console.log(data.clientFilename);
+              }
+            });
         });
 
         $("#buttonAbout").click(function(e) {
             e.preventDefault();
-            console.log(document.getElementById('textareaAbout').value);
+            var about = '{"about":"'+document.getElementById('textareaAbout').value+'"}'
+            $('#btnAbout').text('Change About');
+            $('#btnAbout').toggleClass('btn-danger', false);
+            $('#btnAbout').toggleClass('btn-success', true);
             $('#modalAbout').modal('toggle');
+            $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/forms",
+              dataType: "json",
+              data: about,
+              success: function (data) {
+                console.log(data.about);
+              }
+            });
         });
 
         $("#buttonBody").click(function(e) {
             e.preventDefault();
-            console.log(document.getElementById('textareaBody').value);
+            var body = '{"body":"'+document.getElementById('textareaBody').value+'"}'
+            $('#btnBody').text('Change Body');
+            $('#btnBody').toggleClass('btn-danger', false);
+            $('#btnBody').toggleClass('btn-success', true);
             $('#modalBody').modal('toggle');
+            $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/forms",
+              dataType: "json",
+              data: body,
+              success: function (data) {
+                console.log(data.body);
+              }
+            });
         });
 
         $("#buttonLink").click(function(e) {
             e.preventDefault();
-            console.log(document.getElementById('textLink').value);
+            var link = '{"link":"'+document.getElementById('textareaLink').value+'"}'
+            $('#btnLink').text('Change Link');
+            $('#btnLink').toggleClass('btn-danger', false);
+            $('#btnLink').toggleClass('btn-success', true);
             $('#modalLink').modal('toggle');
+            $.ajax({
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              url: "/forms",
+              dataType: "json",
+              data: link,
+              success: function (data) {
+                console.log(data.link);
+              }
+            });
         });
     </script>
 </html>
