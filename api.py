@@ -334,6 +334,9 @@ def index():
                                      (url.rsplit('/', 1)[1]).rsplit('.', 1)[0])) 
                         # !! TODO build in the background
                     else:
+                        # !! TODO
+                        #    should point to docker index url, expects a <meta name="description"
+                        #    won't have a dockerfile in the service folder
                         print url
             except:
                 print "Bad URL"
