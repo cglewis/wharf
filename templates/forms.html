@@ -31,7 +31,7 @@
                 </ul>
             </div>
 
-            <hr>
+            <br />
 
             <div class="jubotron">
                 <br />
@@ -44,7 +44,7 @@
                 <br /><br />
                 {% endfor %} 
                 <div class="col-md-2 pull-right">
-                    <button class="btn btn-large btn-primary">Finished</button>
+                    <button id="btnFinished" class="btn btn-large btn-primary">Finished</button>
                 </div>
                 <br /><br />
             </div>
@@ -208,101 +208,91 @@
         </div> <!-- /container -->
     </body>
     <script type="text/javascript">
-        $("#buttonDescription").click(function(e) {
+        $("#btnFinished").click(function(e) {
             e.preventDefault();
-            var desc = '{"description":"'+document.getElementById('textareaDescription').value+'"}'
-            $('#btnDescription').text('Change Description');
-            $('#btnDescription').toggleClass('btn-danger', false);
-            $('#btnDescription').toggleClass('btn-success', true);
-            $('#modalDescription').modal('toggle');
+            var desc = '{"filename":"{{ filename }}","missing_files":"{{ missing_files }}",'
+            if ( document.getElementById('textareaDescription').value ) {
+                desc += '"description":"'+document.getElementById('textareaDescription').value+'",';
+            }
+            if ( document.getElementById('textareaClient').value ) {
+                desc += '"client":"'+document.getElementById('textareaClient').value+'",';
+            }
+            if ( document.getElementById('clientLanguage').value ) {
+                desc += '"clientLanguage":"'+document.getElementById('clientLanguage').value+'",';
+            }
+            if ( document.getElementById('clientFilename').value ) {
+                desc += '"clientFilename":"'+document.getElementById('clientFilename').value+'",';
+            }
+            if ( document.getElementById('textareaAbout').value ) {
+                desc += '"about":"'+document.getElementById('textareaAbout').value+'",';
+            }
+            if ( document.getElementById('textareaBody').value ) {
+                desc += '"body":"'+document.getElementById('textareaBody').value+'",';
+            }
+            if ( document.getElementById('textLink').value ) {
+                desc += '"link":"'+document.getElementById('textLink').value+'",';
+            }
+            desc = desc.substring(0, desc.length-1);
+            desc += '}';
+
             $.ajax({
               type: "POST",
               contentType: "application/json; charset=utf-8",
               url: "/forms",
               dataType: "json",
               data: desc,
-              success: function (data) {
-                console.log(data.description);
-              }
-            });
+            }).done(function(response) {
+                    console.log(response);
+                    window.location = build_url(response);
+               });
+        });
+
+        function build_url(response) {
+            pathArray = window.location.href.split( '/' );
+            protocol = pathArray[0];
+            host = pathArray[2];
+            url = protocol + '//' + host + "/";
+            return url;
+        }
+
+        $("#buttonDescription").click(function(e) {
+            e.preventDefault();
+            $('#btnDescription').text('Change Description');
+            $('#btnDescription').toggleClass('btn-danger', false);
+            $('#btnDescription').toggleClass('btn-success', true);
+            $('#modalDescription').modal('toggle');
         });
 
         $("#buttonClient").click(function(e) {
             e.preventDefault();
-            var client = '{"client":"'+document.getElementById('textareaClient').value+'","clientLanguage":"'+document.getElementById('clientLanguage').value+'","clientFilename":"'+document.getElementById('clientFilename').value+'"}'
             $('#btnClient').text('Change Client');
             $('#btnClient').toggleClass('btn-danger', false);
             $('#btnClient').toggleClass('btn-success', true);
             $('#modalClient').modal('toggle');
-            $.ajax({
-              type: "POST",
-              contentType: "application/json; charset=utf-8",
-              url: "/forms",
-              dataType: "json",
-              data: client,
-              success: function (data) {
-                console.log(data.client);
-                console.log(data.clientLanguage);
-                console.log(data.clientFilename);
-              }
-            });
         });
 
         $("#buttonAbout").click(function(e) {
             e.preventDefault();
-            var about = '{"about":"'+document.getElementById('textareaAbout').value+'"}'
             $('#btnAbout').text('Change About');
             $('#btnAbout').toggleClass('btn-danger', false);
             $('#btnAbout').toggleClass('btn-success', true);
             $('#modalAbout').modal('toggle');
-            $.ajax({
-              type: "POST",
-              contentType: "application/json; charset=utf-8",
-              url: "/forms",
-              dataType: "json",
-              data: about,
-              success: function (data) {
-                console.log(data.about);
-              }
-            });
         });
 
         $("#buttonBody").click(function(e) {
             e.preventDefault();
-            var body = '{"body":"'+document.getElementById('textareaBody').value+'"}'
             $('#btnBody').text('Change Body');
             $('#btnBody').toggleClass('btn-danger', false);
             $('#btnBody').toggleClass('btn-success', true);
             $('#modalBody').modal('toggle');
-            $.ajax({
-              type: "POST",
-              contentType: "application/json; charset=utf-8",
-              url: "/forms",
-              dataType: "json",
-              data: body,
-              success: function (data) {
-                console.log(data.body);
-              }
-            });
         });
 
         $("#buttonLink").click(function(e) {
             e.preventDefault();
-            var link = '{"link":"'+document.getElementById('textareaLink').value+'"}'
             $('#btnLink').text('Change Link');
             $('#btnLink').toggleClass('btn-danger', false);
             $('#btnLink').toggleClass('btn-success', true);
             $('#modalLink').modal('toggle');
-            $.ajax({
-              type: "POST",
-              contentType: "application/json; charset=utf-8",
-              url: "/forms",
-              dataType: "json",
-              data: link,
-              success: function (data) {
-                console.log(data.link);
-              }
-            });
         });
     </script>
 </html>
