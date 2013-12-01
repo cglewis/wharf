@@ -385,6 +385,7 @@ def saas(service):
 def new(service):
     exposed_ports = []
     # !! TODO try/expect
+    #    runs differently if from index.docker.io
     dockerfile = "services/"+service+"/"+SERVICE_DICT['dockerfile']
     with open(dockerfile, 'r') as content_file:
         for line in content_file:
@@ -560,16 +561,78 @@ def forms():
             elif filename.rsplit('.', 1)[1] == "gz":
                 with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
                     f.write(description)
-        #client = request.json['client']
-        #clientLanguage = request.json['clientLanguage']
-        #clientFilename = request.json['clientFilename']
-        #about = request.json['about']
-        #body = request.json['body']
-        #link = reqest.json['link']
+        if "client" in missing_files:
+            client = ""
+            clientLanguage = ""
+            clientFilename = ""
+            try:
+                client = request.json['client']
+                clientLanguage = request.json['clientLanguage']
+                clientFilename = request.json['clientFilename']
+            except:
+                pass
+            if j == 0:
+                j = ""
+            if filename.rsplit('.', 1)[1] == "zip": 
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                    f.write(clientLanguage+"\n")
+                    f.write(clientFilename)
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                    f.write(client)
+            
+            elif filename.rsplit('.', 1)[1] == "gz":
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                    f.write(clientLanguage+"\n")
+                    f.write(clientFilename)
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                    f.write(client)
+        if "about" in missing_files:
+            about = ""
+            try:
+                about = request.json['about']
+            except:
+                pass
+            if j == 0:
+                j = ""
+            if filename.rsplit('.', 1)[1] == "zip": 
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                    f.write(about)
+            
+            elif filename.rsplit('.', 1)[1] == "gz":
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                    f.write(about)
+        if "body" in missing_files:
+            body = ""
+            try:
+                body = request.json['body']
+            except:
+                pass
+            if j == 0:
+                j = ""
+            if filename.rsplit('.', 1)[1] == "zip": 
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                    f.write(body)
+            
+            elif filename.rsplit('.', 1)[1] == "gz":
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                    f.write(body)
+        if "link" in missing_files:
+            link = ""
+            try:
+                link = request.json['link']
+            except:
+                pass
+            if j == 0:
+                j = ""
+            if filename.rsplit('.', 1)[1] == "zip": 
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                    f.write(link)
+            
+            elif filename.rsplit('.', 1)[1] == "gz":
+                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                    f.write(link)
     except:
         pass
-    # !! TODO
-    #    write results to files that are missing
     return jsonify(url=DOMAIN)
 
 @app.route('/favicon.ico')
