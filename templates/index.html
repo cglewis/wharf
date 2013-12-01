@@ -10,8 +10,11 @@
         <link href="/static/css/jasny-bootstrap.css" rel="stylesheet">
         <link href="/static/css/bootstrap-landing.css" rel="stylesheet">
         <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="/static/css/ladda-themeless.min.css" rel="stylesheet">
         <script src="/static/js/jquery-1.10.1.min.js"></script>
         <script src="/static/js/bootstrap.js"></script>
+        <script src="/static/js/spin.min.js"></script>
+        <script src="/static/js/ladda.min.js"></script>
         <script src="/static/js/fileinput.js"></script>
 
         <title>Wharf</title>
@@ -68,7 +71,7 @@
                     <div class="input-group">
                       <input type="text" value="" placeholder="Wharf URL" name="wharf_url" class="required email form-control" id="mce-EMAIL">
                       <span class="input-group-btn">
-                        <input type="submit" class="button btn btn-default" value="Import" name="subscribe" id="mc-embedded-subscribe">
+                        <input type="submit" class="btn btn-primary ladda-button" data-style="expand-right" value="Import" name="subscribe" id="mc-embedded-subscribe">
                       </span>
                     </div>
                   </form>
@@ -76,10 +79,10 @@
                 <div class="span6">
                     <form action="" method=post enctype=multipart/form-data>
                   <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <span class="btn btn-default btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type=file name=file></span></span>
+                    <span class="btn btn-primary btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type=file name=file></span></span>
                     <span class="fileinput-filename"></span>
                     <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-                    <span class="input-btn"><input type=submit class="button btn btn-default" value=Upload></span>
+                    <span class="input-btn"><input type=submit class="btn btn-primary ladda-button" value=Upload id="file-upload"></span>
                   </div>
                     </form>
                 </div>
@@ -113,6 +116,13 @@
         </div> <!-- /container -->
     </body>
     <script type="text/javascript">
+        $("#mc-embedded-subscribe").click(function(e) {
+            $("#mc-embedded-subscribe").attr('value','Importing...');
+        });
+        $("#file-upload").click(function(e) {
+            $("#file-upload").attr('value','Uploading...');
+        });
+        Ladda.bind( 'input[type=submit]' );
         $(document).ready(function() {
             var activeSystemClass = $('.list-group-item.active');
 
