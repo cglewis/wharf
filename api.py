@@ -32,7 +32,6 @@ from os import walk
 
 import redis
 import requests
-import sys
 import tarfile
 import time
 import zipfile
@@ -564,7 +563,6 @@ def index():
                             return render_template("failed.html")
                         print url
             except:
-                print sys.exc_info()
                 print "Bad URL"
         else:
             return render_template("failed.html")
