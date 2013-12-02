@@ -210,7 +210,7 @@
     <script type="text/javascript">
         $("#btnFinished").click(function(e) {
             e.preventDefault();
-            var desc = '{"filename":"{{ filename }}","missing_files":"{{ missing_files }}",'
+            var desc = '{"filename":"{{ filename }}","url":"{{ url }}","missing_files":"{{ missing_files }}",'
             if ( document.getElementById('textareaDescription').value ) {
                 desc += '"description":"'+document.getElementById('textareaDescription').value+'",';
             }

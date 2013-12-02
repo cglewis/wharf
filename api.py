@@ -28,8 +28,11 @@ from os import listdir
 from os import path
 from os import remove
 from os import rmdir
+from os import walk
 
 import redis
+import requests
+import sys
 import tarfile
 import time
 import zipfile
@@ -197,7 +200,7 @@ def index():
                                 if "dockerfile" in missing_files:
                                     return render_template("failed.html")
                                 else:
-                                    return render_template("forms.html", missing_files=missing_files, filename=filename)
+                                    return render_template("forms.html", missing_files=missing_files, filename=filename, url=url)
 
                             # move to services folder
                             i = 0
@@ -256,7 +259,7 @@ def index():
                                 if "dockerfile" in missing_files:
                                     return render_template("failed.html")
                                 else:
-                                    return render_template("forms.html", missing_files=missing_files)
+                                    return render_template("forms.html", missing_files=missing_files, filename=filename, url=url)
 
                             # move to services folder
                             i = 0
@@ -305,40 +308,263 @@ def index():
                 print "No file selected"
         elif url != "":
             try:
-                # !! TODO
                 if url:
                     # !! TODO try/except
                     if url.rsplit('.', 1)[1] == "git":
                         # !! TODO try/except - if the folder already exists
                         git.clone(url, path.join(app.config['UPLOAD_FOLDER'],
                                                  (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
-                        # !! TODO
-                        #    allow exception for dockerfile, check at root as well
-                        for key,value in SERVICE_DICT.items():
-                            if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                         (url.rsplit('/', 1)[1]).rsplit('.', 1)[0], value)):
-                                # !! TODO make this better
-                                #         render a form to fill out the missing metadata
-                                print path.join(app.config['UPLOAD_FOLDER'],
-                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0], value),"failed",value
-                                return render_template("failed.html")
-                            else:
-                                print "found",value
-                        # !! TODO check for metadata files
-                        # !! TODO check if the service already exists
-                        # move to services folder
-                        # !! TODO needs to be fixed
-                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]), 
-                           path.join(app.config['SERVICES_FOLDER'],
-                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0])) 
-                        # !! TODO build in the background
+
+                        # check for dockerfile at root
+                        if path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                 "Dockerfile")):
+                            # check for existence of necessary files
+                            missing_files = {}
+                            for key,value in SERVICE_DICT.items():
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             value)):
+                                    missing_files[key] = value
+
+                            if "dockerfile" in missing_files:
+                                del missing_files['dockerfile']
+                            if missing_files:
+                                return render_template("forms.html",
+                                                       missing_files=missing_files,
+                                                       filename=file,
+                                                       url=url)
+                            # move to services folder
+                            i = 0
+                            while i != -1:
+                                try:
+                                    if i == 0:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                           app.config['SERVICES_FOLDER'])
+                                    elif i == 1:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                           path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                           app.config['SERVICES_FOLDER'])
+                                    else:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i-1)),
+                                           path.join(app.config['UPLOAD_FOLDER'],
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                           app.config['SERVICES_FOLDER'])
+                                    i = -1
+                                except:
+                                    i += 1
+                            try:
+                                # remove leftover files in tmp
+                                rmdir(path.join(app.config['UPLOAD_FOLDER'],
+                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                            except:
+                                pass
+                        # check for dockerfile assuming repo is the services folder
+                        elif path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                 SERVICE_DICT['dockerfile'])):
+                            # check for existence of necessary files
+                            missing_files = {}
+                            for key,value in SERVICE_DICT.items():
+                                if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             value)):
+                                    missing_files[key] = value
+
+                            if missing_files:
+                                return render_template("forms.html",
+                                                       missing_files=missing_files,
+                                                       filename=file,
+                                                       url=url)
+                            # move to services folder
+                            i = 0
+                            while i != -1:
+                                try:
+                                    if i == 0:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                           app.config['SERVICES_FOLDER'])
+                                    elif i == 1:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                           path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                           app.config['SERVICES_FOLDER'])
+                                    else:
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i-1)),
+                                           path.join(app.config['UPLOAD_FOLDER'],
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                        mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                           app.config['SERVICES_FOLDER'])
+                                    i = -1
+                                except:
+                                    i += 1
+                            try:
+                                # remove leftover files in tmp
+                                rmdir(path.join(app.config['UPLOAD_FOLDER'],
+                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                            except:
+                                pass
+                        else:
+                            i = 0
+                            repo_dirs = []
+                            for root, dirs, files in walk(path.join(app.config['UPLOAD_FOLDER'],
+                                                                    (url.rsplit('/', 1)[1]).rsplit('.', 1)[0])):
+                                if i == 0:
+                                    repo_dirs = dirs
+                                i += 1
+                            for service_dir in repo_dirs:
+                                # check for dockerfile one folder deep
+                                # could be more than one
+                                if path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                         (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                         service_dir, "Dockerfile")):
+                                    # check for existence of necessary files
+                                    missing_files = {}
+                                    for key,value in SERVICE_DICT.items():
+                                        if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                                     service_dir,
+                                                                     value)):
+                                            missing_files[key] = value
+
+                                    if "dockerfile" in missing_files:
+                                        del missing_files['dockerfile']
+                                    if missing_files:
+                                        # !! TODO TODO TODO
+                                        #    this needs to be re-worked for times 
+                                        #    when there is more than one service_dir
+                                        return render_template("forms.html",
+                                                               missing_files=missing_files,
+                                                               filename=file,
+                                                               url=url)
+                                    # move to services folder
+                                    i = 0
+                                    while i != -1:
+                                        try:
+                                            if i == 0:
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir),
+                                                   app.config['SERVICES_FOLDER'])
+                                            elif i == 1:
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir),
+                                                   path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)))
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)),
+                                                   app.config['SERVICES_FOLDER'])
+                                            else:
+                                                mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i-1)),
+                                                   path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)))
+                                                mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)),
+                                                   app.config['SERVICES_FOLDER'])
+                                            i = -1
+                                        except:
+                                            i += 1
+                                # check for dockerfile in regular services folder
+                                # could be more than one
+                                elif path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                           (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                           service_dir, SERVICE_DICT['dockerfile'])):
+                                    print "dockerfile in services folder"
+                                    # check for existence of necessary files
+                                    missing_files = {}
+                                    for key,value in SERVICE_DICT.items():
+                                        if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
+                                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                                     service_dir,
+                                                                     value)):
+                                            missing_files[key] = value
+
+                                    if "dockerfile" in missing_files:
+                                        del missing_files['dockerfile']
+                                    if missing_files:
+                                        # !! TODO TODO TODO
+                                        #    this needs to be re-worked for times 
+                                        #    when there is more than one service_dir
+                                        return render_template("forms.html",
+                                                               missing_files=missing_files,
+                                                               filename=file,
+                                                               url=url)
+                                    # move to services folder
+                                    i = 0
+                                    while i != -1:
+                                        try:
+                                            if i == 0:
+                                                print path.join(app.config['UPLOAD_FOLDER'],
+                                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                                service_dir)
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir),
+                                                   app.config['SERVICES_FOLDER'])
+                                            elif i == 1:
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir),
+                                                   path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)))
+                                                mv(path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)),
+                                                   app.config['SERVICES_FOLDER'])
+                                            else:
+                                                mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i-1)),
+                                                   path.join(app.config['UPLOAD_FOLDER'],
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)))
+                                                mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             service_dir+str(i)),
+                                                   app.config['SERVICES_FOLDER'])
+                                            i = -1
+                                        except:
+                                            i += 1
+                            try:
+                                rmdir(path.join(app.config['UPLOAD_FOLDER'],
+                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                            except:
+                                pass
                     else:
                         # !! TODO
                         #    should point to docker index url, expects a <meta name="description"
                         #    won't have a dockerfile in the service folder
+                        try:
+                            index_repo = (requests.get(url).content).split('<meta name="description" content="')
+                            index_repo = index_repo[1].split("/>")
+                            repo, desc = index_repo[0].split(":", 1)
+                            print repo, desc
+                        except:
+                            return render_template("failed.html")
                         print url
             except:
+                print sys.exc_info()
                 print "Bad URL"
         else:
             return render_template("failed.html")
@@ -386,7 +612,19 @@ def new(service):
     exposed_ports = []
     # !! TODO try/expect
     #    runs differently if from index.docker.io
-    dockerfile = "services/"+service+"/"+SERVICE_DICT['dockerfile']
+    dockerfile = ""
+    docker_path = ""
+    if path.exists(path.join(app.config['SERVICES_FOLDER'],
+                             service,
+                             SERVICE_DICT['dockerfile'])):
+        dockerfile = "services/"+service+"/"+SERVICE_DICT['dockerfile']
+        docker_path = "services/"+service+"/docker/"
+    elif path.exists(path.join(app.config['SERVICES_FOLDER'],
+                             service,
+                             "dockerfile")):
+        dockerfile = "services/"+service+"/dockerfile"
+        docker_path = "services/"+service+"/"
+    # !! TODO if dockerfile is still ""
     with open(dockerfile, 'r') as content_file:
         for line in content_file:
             if line.startswith("EXPOSE"):
@@ -403,7 +641,7 @@ def new(service):
         container = c.create_container(image_id, ports=exposed_ports)
     except:
         # !! TODO try/except
-        image_id, response = c.build(path="services/"+service+"/docker/", tag=service)
+        image_id, response = c.build(path=docker_path, tag=service)
         image_id_path = "services/"+service+"/.image_id"
         with open(image_id_path, 'w') as content_file:
             content_file.write(image_id)
@@ -463,174 +701,171 @@ def forms():
     # !! TODO try/except
     try:
         filename = request.json['filename']
-        if filename.rsplit('.', 1)[1] == "zip":
-            # move to services folder
-            i = 0
-            j = 0
-            while i != -1:
-                try:
-                    if i == 0:
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     filename.rsplit('.', 1)[0]),
-                           app.config['SERVICES_FOLDER'])
-                    elif i == 1:
-                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                     filename.rsplit('.', 1)[0], 
-                                     filename.rsplit('.', 1)[0]), 
-                           path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     (filename.rsplit('.', 1)[0])+str(i)))
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     (filename.rsplit('.', 1)[0])+str(i)), 
-                           app.config['SERVICES_FOLDER'])
-                    else:
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     (filename.rsplit('.', 1)[0])+str(i-1)), 
-                           path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     (filename.rsplit('.', 1)[0])+str(i)))
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 1)[0], 
-                                     (filename.rsplit('.', 1)[0])+str(i)), 
-                           app.config['SERVICES_FOLDER'])
-                    j = i
-                    i = -1
-                except:
-                    i += 1
-            # remove leftover files in tmp
-            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-            rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
+        url = request.json['url']
+        if filename:
+            if filename.rsplit('.', 1)[1] == "zip":
+                # move to services folder
+                i = 0
+                j = 0
+                while i != -1:
+                    try:
+                        if i == 0:
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         filename.rsplit('.', 1)[0]),
+                               app.config['SERVICES_FOLDER'])
+                        elif i == 1:
+                            mv(path.join(app.config['UPLOAD_FOLDER'],
+                                         filename.rsplit('.', 1)[0], 
+                                         filename.rsplit('.', 1)[0]), 
+                               path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         (filename.rsplit('.', 1)[0])+str(i)))
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         (filename.rsplit('.', 1)[0])+str(i)), 
+                               app.config['SERVICES_FOLDER'])
+                        else:
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         (filename.rsplit('.', 1)[0])+str(i-1)), 
+                               path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         (filename.rsplit('.', 1)[0])+str(i)))
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 1)[0], 
+                                         (filename.rsplit('.', 1)[0])+str(i)), 
+                               app.config['SERVICES_FOLDER'])
+                        j = i
+                        i = -1
+                    except:
+                        i += 1
+                # remove leftover files in tmp
+                remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+                rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
 
-        elif filename.rsplit('.', 1)[1] == "gz":
-            # move to services folder
-            i = 0
-            j = 0
-            while i != -1:
-                try:
-                    if i == 0:
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     filename.rsplit('.', 2)[0]),
-                           app.config['SERVICES_FOLDER'])
-                    elif i == 1:
-                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                     filename.rsplit('.', 2)[0], 
-                                     filename.rsplit('.', 2)[0]), 
-                           path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     (filename.rsplit('.', 2)[0])+str(i)))
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     (filename.rsplit('.', 2)[0])+str(i)), 
-                           app.config['SERVICES_FOLDER'])
-                    else:
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     (filename.rsplit('.', 2)[0])+str(i-1)), 
-                           path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     (filename.rsplit('.', 2)[0])+str(i)))
-                        mv(path.join(app.config['UPLOAD_FOLDER'], 
-                                     filename.rsplit('.', 2)[0], 
-                                     (filename.rsplit('.', 2)[0])+str(i)), 
-                           app.config['SERVICES_FOLDER'])
-                    j = i
-                    i = -1
-                except:
-                    i += 1
-            # remove leftover files in tmp
-            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-            rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+            elif filename.rsplit('.', 1)[1] == "gz":
+                # move to services folder
+                i = 0
+                j = 0
+                while i != -1:
+                    try:
+                        if i == 0:
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         filename.rsplit('.', 2)[0]),
+                               app.config['SERVICES_FOLDER'])
+                        elif i == 1:
+                            mv(path.join(app.config['UPLOAD_FOLDER'],
+                                         filename.rsplit('.', 2)[0], 
+                                         filename.rsplit('.', 2)[0]), 
+                               path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         (filename.rsplit('.', 2)[0])+str(i)))
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         (filename.rsplit('.', 2)[0])+str(i)), 
+                               app.config['SERVICES_FOLDER'])
+                        else:
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         (filename.rsplit('.', 2)[0])+str(i-1)), 
+                               path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         (filename.rsplit('.', 2)[0])+str(i)))
+                            mv(path.join(app.config['UPLOAD_FOLDER'], 
+                                         filename.rsplit('.', 2)[0], 
+                                         (filename.rsplit('.', 2)[0])+str(i)), 
+                               app.config['SERVICES_FOLDER'])
+                        j = i
+                        i = -1
+                    except:
+                        i += 1
+                # remove leftover files in tmp
+                remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+                rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
         
-        missing_files = request.json['missing_files']
-        if "description" in missing_files:
-            description = ""
-            try:
-                description = request.json['description']
-            except:
-                pass
-            if j == 0:
-                j = ""
-            if filename.rsplit('.', 1)[1] == "zip": 
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
-                    f.write(description)
-            
-            elif filename.rsplit('.', 1)[1] == "gz":
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
-                    f.write(description)
-        if "client" in missing_files:
-            client = ""
-            clientLanguage = ""
-            clientFilename = ""
-            try:
-                client = request.json['client']
-                clientLanguage = request.json['clientLanguage']
-                clientFilename = request.json['clientFilename']
-            except:
-                pass
-            if j == 0:
-                j = ""
-            if filename.rsplit('.', 1)[1] == "zip": 
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
-                    f.write(clientLanguage+"\n")
-                    f.write(clientFilename)
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
-                    f.write(client)
-            
-            elif filename.rsplit('.', 1)[1] == "gz":
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
-                    f.write(clientLanguage+"\n")
-                    f.write(clientFilename)
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
-                    f.write(client)
-        if "about" in missing_files:
-            about = ""
-            try:
-                about = request.json['about']
-            except:
-                pass
-            if j == 0:
-                j = ""
-            if filename.rsplit('.', 1)[1] == "zip": 
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
-                    f.write(about)
-            
-            elif filename.rsplit('.', 1)[1] == "gz":
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
-                    f.write(about)
-        if "body" in missing_files:
-            body = ""
-            try:
-                body = request.json['body']
-            except:
-                pass
-            if j == 0:
-                j = ""
-            if filename.rsplit('.', 1)[1] == "zip": 
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
-                    f.write(body)
-            
-            elif filename.rsplit('.', 1)[1] == "gz":
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
-                    f.write(body)
-        if "link" in missing_files:
-            link = ""
-            try:
-                link = request.json['link']
-            except:
-                pass
-            if j == 0:
-                j = ""
-            if filename.rsplit('.', 1)[1] == "zip": 
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
-                    f.write(link)
-            
-            elif filename.rsplit('.', 1)[1] == "gz":
-                with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
-                    f.write(link)
+            missing_files = request.json['missing_files']
+            if "description" in missing_files:
+                description = ""
+                try:
+                    description = request.json['description']
+                except:
+                    pass
+                if j == 0:
+                    j = ""
+                if filename.rsplit('.', 1)[1] == "zip": 
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                        f.write(description)
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                        f.write(description)
+            if "client" in missing_files:
+                client = ""
+                clientLanguage = ""
+                clientFilename = ""
+                try:
+                    client = request.json['client']
+                    clientLanguage = request.json['clientLanguage']
+                    clientFilename = request.json['clientFilename']
+                except:
+                    pass
+                if j == 0:
+                    j = ""
+                if filename.rsplit('.', 1)[1] == "zip": 
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                        f.write(clientLanguage+"\n")
+                        f.write(clientFilename)
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                        f.write(client)
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                        f.write(clientLanguage+"\n")
+                        f.write(clientFilename)
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                        f.write(client)
+            if "about" in missing_files:
+                about = ""
+                try:
+                    about = request.json['about']
+                except:
+                    pass
+                if j == 0:
+                    j = ""
+                if filename.rsplit('.', 1)[1] == "zip": 
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                        f.write(about)
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                        f.write(about)
+            if "body" in missing_files:
+                body = ""
+                try:
+                    body = request.json['body']
+                except:
+                    pass
+                if j == 0:
+                    j = ""
+                if filename.rsplit('.', 1)[1] == "zip": 
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                        f.write(body)
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                        f.write(body)
+            if "link" in missing_files:
+                link = ""
+                try:
+                    link = request.json['link']
+                except:
+                    pass
+                if j == 0:
+                    j = ""
+                if filename.rsplit('.', 1)[1] == "zip": 
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                        f.write(link)
+                elif filename.rsplit('.', 1)[1] == "gz":
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                        f.write(link)
     except:
         pass
     return jsonify(url=DOMAIN)
