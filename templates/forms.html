@@ -37,20 +37,27 @@
                 <br />
                 <h3>Some files were missing from your service...</h3>
                 <hr>
+                <div class="col-md-4 pull-right">
+                    <button id="btnFinished" class="btn btn-large btn-primary">Finished</button>
+                </div>
+                <br /><br />
+                {% for service in services %}
+                <div class="span6 well">
+                <h2>{{ service }}</h2>
+                {% set outer_counter = loop.index %}
                 {% for key,value in missing_files.iteritems() %}
-                <button id="btn{{key.capitalize()}}" class="btn btn-large btn-danger" data-toggle="modal" data-target="#modal{{key.capitalize()}}">
+                <button id="btn{{key.capitalize()}}{{outer_counter}}" class="btn btn-large btn-danger" data-toggle="modal" data-target="#modal{{key.capitalize()}}{{outer_counter}}">
                     Missing {{ key.capitalize() }}
                 </button>
                 <br /><br />
                 {% endfor %} 
-                <div class="col-md-2 pull-right">
-                    <button id="btnFinished" class="btn btn-large btn-primary">Finished</button>
                 </div>
-                <br /><br />
+                {% endfor %}
             </div>
 
+            {% for service in services %}
             <!-- Modal Description -->
-            <div class="modal fade" id="modalDescription" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modalDescription{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -62,7 +69,7 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <textarea id="textareaDescription" class="form-control" placeholder="Description" rows="5" required></textarea>
+                            <textarea id="textareaDescription{{loop.index}}" class="form-control" placeholder="Description" rows="5" required></textarea>
                           </div>
                         </div>
                       </div>
@@ -70,14 +77,14 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="buttonDescription" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="buttonDescription{{loop.index}}" type="button" class="btn btn-primary">Save changes</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
             <!-- Modal Client -->
-            <div class="modal fade" id="modalClient" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modalClient{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -89,13 +96,13 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <input id="clientLanguage" type="text" class="form-control" placeholder="Client Language" required />
+                            <input id="clientLanguage{{loop.index}}" type="text" class="form-control" placeholder="Client Language" required />
                           </div>
                           <div class="form-group">
-                            <input id="clientFilename" type="text" class="form-control" placeholder="Client Filename" required />
+                            <input id="clientFilename{{loop.index}}" type="text" class="form-control" placeholder="Client Filename" required />
                           </div>
                           <div class="form-group">
-                            <textarea id="textareaClient" class="form-control" placeholder="Client File" rows="5" required></textarea>
+                            <textarea id="textareaClient{{loop.index}}" class="form-control" placeholder="Client File" rows="5" required></textarea>
                           </div>
                         </div>
                       </div>
@@ -103,14 +110,14 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="buttonClient" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="buttonClient{{loop.index}}" type="button" class="btn btn-primary">Save changes</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
             <!-- Modal About -->
-            <div class="modal fade" id="modalAbout" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modalAbout{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -122,7 +129,7 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <textarea id="textareaAbout" class="form-control" placeholder="About" rows="5" required></textarea>
+                            <textarea id="textareaAbout{{loop.index}}" class="form-control" placeholder="About" rows="5" required></textarea>
                           </div>
                         </div>
                       </div>
@@ -130,14 +137,14 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="buttonAbout" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="buttonAbout{{loop.index}}" type="button" class="btn btn-primary">Save changes</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
             <!-- Modal Body -->
-            <div class="modal fade" id="modalBody" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modalBody{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -149,7 +156,7 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <textarea id="textareaBody" class="form-control" placeholder="Body" rows="5" required></textarea>
+                            <textarea id="textareaBody{{loop.index}}" class="form-control" placeholder="Body" rows="5" required></textarea>
                           </div>
                         </div>
                       </div>
@@ -157,14 +164,14 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="buttonBody" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="buttonBody{{loop.index}}" type="button" class="btn btn-primary">Save changes</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
             <!-- Modal Link -->
-            <div class="modal fade" id="modalLink" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal fade" id="modalLink{{loop.index}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -176,10 +183,10 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <input id="textLink" type="text" class="form-control" placeholder="Link" required />
+                            <input id="textLink{{loop.index}}" type="text" class="form-control" placeholder="Link" required />
                           </div>
                           <div class="form-group">
-                            <input id="linkName" type="text" class="form-control" placeholder="Link Name" required />
+                            <input id="linkName{{loop.index}}" type="text" class="form-control" placeholder="Link Name" required />
                           </div>
                         </div>
                       </div>
@@ -187,13 +194,12 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id="buttonLink" type="button" class="btn btn-primary">Save changes</button>
+                    <button id="buttonLink{{loop.index}}" type="button" class="btn btn-primary">Save changes</button>
                   </div>
                 </div><!-- /.modal-content -->
               </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
-
-            <hr>
+            {% endfor %}
 
             <div class="footer">
                 <div class="row-fluid marketing">
@@ -213,31 +219,33 @@
     <script type="text/javascript">
         $("#btnFinished").click(function(e) {
             e.preventDefault();
-            var desc = '{"filename":"{{ filename }}","url":"{{ url }}","missing_files":"{{ missing_files }}",'
-            if ( document.getElementById('textareaDescription').value ) {
-                desc += '"description":"'+document.getElementById('textareaDescription').value+'",';
+            var desc = '{"filename":"{{ filename }}","url":"{{ url }}","services":"{{ services }}","missing_files":"{{ missing_files }}",'
+            {% for service in services %}
+            if ( document.getElementById('textareaDescription{{loop.index}}').value ) {
+                desc += '"description{{loop.index}}":"'+document.getElementById('textareaDescription{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('textareaClient').value ) {
-                desc += '"client":"'+document.getElementById('textareaClient').value+'",';
+            if ( document.getElementById('textareaClient{{loop.index}}').value ) {
+                desc += '"client{{loop.index}}":"'+document.getElementById('textareaClient{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('clientLanguage').value ) {
-                desc += '"clientLanguage":"'+document.getElementById('clientLanguage').value+'",';
+            if ( document.getElementById('clientLanguage{{loop.index}}').value ) {
+                desc += '"clientLanguage{{loop.index}}":"'+document.getElementById('clientLanguage{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('clientFilename').value ) {
-                desc += '"clientFilename":"'+document.getElementById('clientFilename').value+'",';
+            if ( document.getElementById('clientFilename{{loop.index}}').value ) {
+                desc += '"clientFilename{{loop.index}}":"'+document.getElementById('clientFilename{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('textareaAbout').value ) {
-                desc += '"about":"'+document.getElementById('textareaAbout').value+'",';
+            if ( document.getElementById('textareaAbout{{loop.index}}').value ) {
+                desc += '"about{{loop.index}}":"'+document.getElementById('textareaAbout{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('textareaBody').value ) {
-                desc += '"body":"'+document.getElementById('textareaBody').value+'",';
+            if ( document.getElementById('textareaBody{{loop.index}}').value ) {
+                desc += '"body{{loop.index}}":"'+document.getElementById('textareaBody{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('textLink').value ) {
-                desc += '"link":"'+document.getElementById('textLink').value+'",';
+            if ( document.getElementById('textLink{{loop.index}}').value ) {
+                desc += '"link{{loop.index}}":"'+document.getElementById('textLink{{loop.index}}').value+'",';
             }
-            if ( document.getElementById('linkName').value ) {
-                desc += '"linkName":"'+document.getElementById('linkName').value+'",';
+            if ( document.getElementById('linkName{{loop.index}}').value ) {
+                desc += '"linkName{{loop.index}}":"'+document.getElementById('linkName{{loop.index}}').value+'",';
             }
+            {% endfor %}
             desc = desc.substring(0, desc.length-1);
             desc += '}';
 
@@ -261,45 +269,47 @@
             return url;
         }
 
-        $("#buttonDescription").click(function(e) {
+        {% for service in services %}
+        $("#buttonDescription{{loop.index}}").click(function(e) {
             e.preventDefault();
-            $('#btnDescription').text('Change Description');
-            $('#btnDescription').toggleClass('btn-danger', false);
-            $('#btnDescription').toggleClass('btn-success', true);
-            $('#modalDescription').modal('toggle');
+            $('#btnDescription{{loop.index}}').text('Change Description');
+            $('#btnDescription{{loop.index}}').toggleClass('btn-danger', false);
+            $('#btnDescription{{loop.index}}').toggleClass('btn-success', true);
+            $('#modalDescription{{loop.index}}').modal('toggle');
         });
 
-        $("#buttonClient").click(function(e) {
+        $("#buttonClient{{loop.index}}").click(function(e) {
             e.preventDefault();
-            $('#btnClient').text('Change Client');
-            $('#btnClient').toggleClass('btn-danger', false);
-            $('#btnClient').toggleClass('btn-success', true);
-            $('#modalClient').modal('toggle');
+            $('#btnClient{{loop.index}}').text('Change Client');
+            $('#btnClient{{loop.index}}').toggleClass('btn-danger', false);
+            $('#btnClient{{loop.index}}').toggleClass('btn-success', true);
+            $('#modalClient{{loop.index}}').modal('toggle');
         });
 
-        $("#buttonAbout").click(function(e) {
+        $("#buttonAbout{{loop.index}}").click(function(e) {
             e.preventDefault();
-            $('#btnAbout').text('Change About');
-            $('#btnAbout').toggleClass('btn-danger', false);
-            $('#btnAbout').toggleClass('btn-success', true);
-            $('#modalAbout').modal('toggle');
+            $('#btnAbout{{loop.index}}').text('Change About');
+            $('#btnAbout{{loop.index}}').toggleClass('btn-danger', false);
+            $('#btnAbout{{loop.index}}').toggleClass('btn-success', true);
+            $('#modalAbout{{loop.index}}').modal('toggle');
         });
 
-        $("#buttonBody").click(function(e) {
+        $("#buttonBody{{loop.index}}").click(function(e) {
             e.preventDefault();
-            $('#btnBody').text('Change Body');
-            $('#btnBody').toggleClass('btn-danger', false);
-            $('#btnBody').toggleClass('btn-success', true);
-            $('#modalBody').modal('toggle');
+            $('#btnBody{{loop.index}}').text('Change Body');
+            $('#btnBody{{loop.index}}').toggleClass('btn-danger', false);
+            $('#btnBody{{loop.index}}').toggleClass('btn-success', true);
+            $('#modalBody{{loop.index}}').modal('toggle');
         });
 
-        $("#buttonLink").click(function(e) {
+        $("#buttonLink{{loop.index}}").click(function(e) {
             e.preventDefault();
-            $('#btnLink').text('Change Link');
-            $('#btnLink').toggleClass('btn-danger', false);
-            $('#btnLink').toggleClass('btn-success', true);
-            $('#modalLink').modal('toggle');
+            $('#btnLink{{loop.index}}').text('Change Link');
+            $('#btnLink{{loop.index}}').toggleClass('btn-danger', false);
+            $('#btnLink{{loop.index}}').toggleClass('btn-success', true);
+            $('#modalLink{{loop.index}}').modal('toggle');
         });
+        {% endfor %}
     </script>
     <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
