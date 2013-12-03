@@ -115,7 +115,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel">Service About</h4>
                   </div>
                   <div class="modal-body">
                     <div class="panel-body">
@@ -142,7 +142,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel">Service Body</h4>
                   </div>
                   <div class="modal-body">
                     <div class="panel-body">
@@ -169,7 +169,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel">Service Link</h4>
                   </div>
                   <div class="modal-body">
                     <div class="panel-body">
@@ -177,6 +177,9 @@
                         <div class="col-md-12">
                           <div class="form-group">
                             <input id="textLink" type="text" class="form-control" placeholder="Link" required />
+                          </div>
+                          <div class="form-group">
+                            <input id="linkName" type="text" class="form-control" placeholder="Link Name" required />
                           </div>
                         </div>
                       </div>
@@ -231,6 +234,9 @@
             }
             if ( document.getElementById('textLink').value ) {
                 desc += '"link":"'+document.getElementById('textLink').value+'",';
+            }
+            if ( document.getElementById('linkName').value ) {
+                desc += '"linkName":"'+document.getElementById('linkName').value+'",';
             }
             desc = desc.substring(0, desc.length-1);
             desc += '}';
