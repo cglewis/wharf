@@ -163,7 +163,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 @app.route('/', methods=['GET', 'POST'])
-@requires_auth
 def index():
     if request.method == 'POST':
         url = ""
@@ -584,7 +583,6 @@ def index():
     return render_template("index.html",row=row)
 
 @app.route('/saas/<service>')
-@requires_auth
 def saas(service):
     about = ""
     body = ""
@@ -606,7 +604,6 @@ def saas(service):
     return render_template("saas.html",service=service,about=about,body=body,link=link,link_name=link_name)
 
 @app.route('/new/<service>', methods=["POST"])
-@requires_auth
 def new(service):
     exposed_ports = []
     # !! TODO try/expect
@@ -665,7 +662,6 @@ def new(service):
     return jsonify(url=url)
 
 @app.route('/details/<service>/<url>')
-@requires_auth
 def details(url, service):
     # !! TODO try/except
     client = ""
@@ -695,7 +691,6 @@ def details(url, service):
                            link_name=link_name)
 
 @app.route('/forms', methods=['POST'])
-@requires_auth
 def forms():
     # !! TODO try/except
     try:

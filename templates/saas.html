@@ -41,7 +41,11 @@
             <div class="jubotron">
                 <h1>Want to try {{ service }}?</h1>
                 <p class="lead">{{ body }}</p>
-                <a id="button" class="btn btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label"><p id="btnText">Try {{ service }} now</p></span></a>
+                {% if current_user.is_authenticated() %}
+                  <a id="button" class="btn btn-primary ladda-button" data-style="expand-right" data-size="m"><span class="ladda-label"><p id="btnText">Try {{ service }} now</p></span></a>
+                {% else %}
+                  <p>You must be logged in to launch an instance.  Sign up for free <a href="{{ url_for('security.register') }}">here</a>.</p>
+                {% endif %}
             </div>
 
             <hr>
