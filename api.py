@@ -650,6 +650,8 @@ def new(service):
     except:
         # !! TODO try/except
         image_id, response = c.build(path=docker_path, tag=service)
+        # !! TODO leaving in for debugging for now
+        print image_id, response
         image_id_path = "services/"+service+"/.image_id"
         with open(image_id_path, 'w') as content_file:
             content_file.write(image_id)
