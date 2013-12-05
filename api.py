@@ -564,17 +564,39 @@ def index():
                         # !! TODO
                         #    should point to docker index url, expects a <meta name="description"
                         #    won't have a dockerfile in the service folder
+                        #    note the naming scheme will mess with directory structure of service name
+                        #    needs to be handled as a special case
+                        repo = ""
+                        desc = ""
                         try:
                             index_repo = (requests.get(url).content).split('<meta name="description" content="')
-                            index_repo = index_repo[1].split("/>")
+                            index_repo = index_repo[1].split("\" />")
                             # !! TODO try, if fails, there is no description.
-                            repo, desc = index_repo[0].split(": ", 1)
-                            print repo, desc
+                            try:
+                                repo, desc = index_repo[0].split(": ", 1)
+                                print repo, desc
+                            except:
+                                repo = index_repo[0]
+                                print repo
                         except:
                             return render_template("failed.html")
+                        if repo == "":
+                            return render_template("failed.html")
+                        missing_files = {}
+                        for key,value in SERVICE_DICT.items():
+                            missing_files[key] = value
+                        del missing_files["dockerfile"]
+                        if desc != "":
+                            del missing_files["description"]
+                        services.append(repo)
+
+                        return render_template("forms.html",
+                                               services=services,
+                                               missing_files=missing_files,
+                                               filename=file,
+                                               url=url)
                         print url
             except:
-                print sys.exc_info()
                 print "Bad URL"
         else:
             return render_template("failed.html")
@@ -897,7 +919,11 @@ def forms():
                         f.write(link+" "+linkName)
         elif url:
             j_array = []
-            if url.rsplit('.', 1)[1] == "git":
+            if not "." in url or not "git" in url:
+                # docker index
+                # !! TODO
+                print "TODO"
+            elif url.rsplit('.', 1)[1] == "git":
                 # move to services folder
                 i = 0
                 j = 0
