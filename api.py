@@ -921,11 +921,12 @@ def forms():
             j_array = []
             if not "." in url or not "git" in url:
                 # docker index
-                # !! TODO
-                print "TODO"
+                j = 0
+                j_array.append(j)
             elif url.rsplit('.', 1)[1] == "git":
                 # move to services folder
                 i = 0
+                # keeps track of the number of the service (if there is more than one)
                 j = 0
                 services = services.replace('&#39;', "'")
                 services = [ item.encode('ascii') for item in literal_eval(services) ]
@@ -1015,6 +1016,8 @@ def forms():
                 # something different is git repo versus docker index
                 # can all git repos be handled the same, or are there ones that might be different?
 
+            services = services.replace('&#39;', "'")
+            services = [ item.encode('ascii') for item in literal_eval(services) ]
             if len(services) > 1:
                 print services
                 counter = 0
@@ -1030,7 +1033,11 @@ def forms():
                             pass
                         if j_array[counter] == 0:
                             j_array[counter] = ""
-                        if url.rsplit('.', 1)[1] == "git": 
+                        # !! TODO if url is docker index
+                        if not "." in url or not "git" in url:
+                            # !! TODO
+                            print "TODO"
+                        elif url.rsplit('.', 1)[1] == "git": 
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['description'], 'w') as f:
                                 f.write(description)
                     if "client" in missing_files:
@@ -1045,7 +1052,11 @@ def forms():
                             pass
                         if j_array[counter] == 0:
                             j_array[counter] = ""
-                        if url.rsplit('.', 1)[1] == "git": 
+                        # !! TODO if url is docker index
+                        if not "." in url or not "git" in url:
+                            # !! TODO
+                            print "TODO"
+                        elif url.rsplit('.', 1)[1] == "git": 
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client")
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['client'], 'w') as f:
@@ -1061,7 +1072,11 @@ def forms():
                             pass
                         if j_array[counter] == 0:
                             j_array[counter] = ""
-                        if url.rsplit('.', 1)[1] == "git": 
+                        # !! TODO if url is docker index
+                        if not "." in url or not "git" in url:
+                            # !! TODO
+                            print "TODO"
+                        elif url.rsplit('.', 1)[1] == "git": 
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['about'], 'w') as f:
@@ -1074,7 +1089,11 @@ def forms():
                             pass
                         if j_array[counter] == 0:
                             j_array[counter] = ""
-                        if url.rsplit('.', 1)[1] == "git": 
+                        # !! TODO if url is docker index
+                        if not "." in url or not "git" in url:
+                            # !! TODO
+                            print "TODO"
+                        elif url.rsplit('.', 1)[1] == "git": 
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['body'], 'w') as f:
@@ -1089,7 +1108,11 @@ def forms():
                             pass
                         if j_array[counter] == 0:
                             j_array[counter] = ""
-                        if url.rsplit('.', 1)[1] == "git": 
+                        # !! TODO if url is docker index
+                        if not "." in url or not "git" in url:
+                            # !! TODO
+                            print "TODO"
+                        elif url.rsplit('.', 1)[1] == "git": 
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['link'], 'w') as f:
@@ -1105,7 +1128,11 @@ def forms():
                         pass
                     if j == 0:
                         j = ""
-                    if url.rsplit('.', 1)[1] == "git": 
+                    # !! TODO if url is docker index
+                    if not "." in url or not "git" in url:
+                        # !! TODO
+                        print "TODO"
+                    elif url.rsplit('.', 1)[1] == "git": 
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
                             f.write(description)
                 if "client" in missing_files:
@@ -1120,7 +1147,11 @@ def forms():
                         pass
                     if j == 0:
                         j = ""
-                    if url.rsplit('.', 1)[1] == "git": 
+                    # !! TODO if url is docker index
+                    if not "." in url or not "git" in url:
+                        # !! TODO
+                        print "TODO"
+                    elif url.rsplit('.', 1)[1] == "git": 
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client")
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
@@ -1136,7 +1167,11 @@ def forms():
                         pass
                     if j == 0:
                         j = ""
-                    if url.rsplit('.', 1)[1] == "git": 
+                    # !! TODO if url is docker index
+                    if not "." in url or not "git" in url:
+                        # !! TODO
+                        print "TODO"
+                    elif url.rsplit('.', 1)[1] == "git": 
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
@@ -1149,7 +1184,11 @@ def forms():
                         pass
                     if j == 0:
                         j = ""
-                    if url.rsplit('.', 1)[1] == "git": 
+                    # !! TODO if url is docker index
+                    if not "." in url or not "git" in url:
+                        # !! TODO
+                        print "TODO"
+                    elif url.rsplit('.', 1)[1] == "git": 
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
@@ -1164,7 +1203,11 @@ def forms():
                         pass
                     if j == 0:
                         j = ""
-                    if url.rsplit('.', 1)[1] == "git": 
+                    # !! TODO if url is docker index
+                    if not "." in url or not "git" in url:
+                        # !! TODO
+                        print "TODO"
+                    elif url.rsplit('.', 1)[1] == "git": 
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
