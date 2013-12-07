@@ -220,7 +220,7 @@
     <script type="text/javascript">
         $("#btnFinished").click(function(e) {
             e.preventDefault();
-            var desc = '{"filename":"{{ filename }}","url":"{{ url }}","services":"{{ services }}","missing_files":"{{ missing_files }}",'
+            var desc = '{"filename":"{{ filename }}","indexDesc":"{{ indexDesc }}","url":"{{ url }}","services":"{{ services }}","missing_files":"{{ missing_files }}",'
             {% for service in services %}
             if ( document.getElementById('textareaDescription{{loop.index}}').value ) {
                 desc += '"description{{loop.index}}":"'+document.getElementById('textareaDescription{{loop.index}}').value+'",';
