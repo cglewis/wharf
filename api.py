@@ -654,7 +654,15 @@ def new(service):
                              "Dockerfile")):
         dockerfile = "services/"+service+"/Dockerfile"
         docker_path = "services/"+service+"/"
-    # !! TODO if dockerfile is still ""
+    # if dockerfile is still ""
+    # docker index
+    else:
+        # !! TODO
+        # save a file with the container id
+        # if no file, build from docker index
+        # start container
+        url = "TODO:TODO"
+        return jsonify(url=url)
     with open(dockerfile, 'r') as content_file:
         for line in content_file:
             if line.startswith("EXPOSE"):
