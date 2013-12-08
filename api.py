@@ -34,7 +34,6 @@ from os import walk
 
 import redis
 import requests
-import sys
 import tarfile
 import time
 import zipfile
@@ -663,13 +662,27 @@ def new(service):
     # if dockerfile is still ""
     # docker index
     else:
-        print service
-        # !! TODO
-        # save a file with the container id
-        # if no file, build from docker index
-        # start container
-        url = "TODO:TODO"
+        # !! TODO try/except
+        service = service.replace("-", "/", 1)
+        c.pull(service)
+        container = c.create_container(service)
+        container_id = container["Id"]
+        c.start(container)
+        b = c.inspect_container(container)
+        ports = b['NetworkSettings']['PortMapping']['Tcp']
+        for key,value in ports.items():
+            exposed_ports.append(key)
+        for exposed_port in exposed_ports:
+            container_port = c.port(container_id, exposed_port)
+            r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
+            r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
+            # !! TODO more than one url when there is more than one exposed_port
+            if HIPACHE_PORT == "80":
+                url = "%s:%s" % (DOMAIN, container_port)
+            else:
+                url = "%s:%s" % (DOMAIN, container_port)
         return jsonify(url=url)
+
     with open(dockerfile, 'r') as content_file:
         for line in content_file:
             if line.startswith("EXPOSE"):
@@ -708,7 +721,7 @@ def new(service):
         if HIPACHE_PORT == "80":
             url = "%s:%s" % (DOMAIN, container_port)
         else:
-            url="%s:%s" % (DOMAIN, container_port)
+            url = "%s:%s" % (DOMAIN, container_port)
 
     return jsonify(url=url)
 
@@ -1309,9 +1322,7 @@ def forms():
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
                             f.write(link+" "+linkName)
     except:
-        print sys.exc_info()
         pass
-    print "test"
     return jsonify(url=DOMAIN)
 
 @app.route('/favicon.ico')
