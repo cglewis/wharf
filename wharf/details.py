@@ -2,6 +2,13 @@ from wharf import app
 
 from flask import render_template
 
+SERVICE_DICT = {'description':'description.txt',
+                'client':'client/client.txt',
+                'about':'html/about.html',
+                'body':'html/body.html',
+                'link':'html/link.html',
+                'dockerfile':'docker/Dockerfile'}
+
 @app.route('/details/<service>/<url>')
 def details(url, service):
     # !! TODO try/except

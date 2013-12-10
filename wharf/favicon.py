@@ -1,5 +1,7 @@
 from wharf import app
 
+from flask import send_from_directory
+
 from os import path
 
 @app.route('/favicon.ico')

@@ -1,14 +1,24 @@
 from wharf import app
 
+from flask import jsonify
+
 from docker import client
 
 from os import path
 
 import redis
 
+DOMAIN = "localhost"
+HIPACHE_PORT="80"
 DOCKER_HOST="localhost"
 REDIS_HOST="localhost"
 REDIS_PORT=6379
+SERVICE_DICT = {'description':'description.txt',
+                'client':'client/client.txt',
+                'about':'html/about.html',
+                'body':'html/body.html',
+                'link':'html/link.html',
+                'dockerfile':'docker/Dockerfile'}
 
 r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
 c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)

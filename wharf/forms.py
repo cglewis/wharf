@@ -1,5 +1,26 @@
 from wharf import app
 
+from flask import jsonify
+from flask import render_template
+from flask import request
+
+from ast import literal_eval
+from sh import mv
+from shutil import rmtree
+
+from os import mkdir
+from os import path
+from os import remove
+from os import rmdir
+
+DOMAIN = "localhost"
+SERVICE_DICT = {'description':'description.txt',
+                'client':'client/client.txt',
+                'about':'html/about.html',
+                'body':'html/body.html',
+                'link':'html/link.html',
+                'dockerfile':'docker/Dockerfile'}
+
 @app.route('/forms', methods=['POST'])
 def forms():
     # !! TODO try/except
