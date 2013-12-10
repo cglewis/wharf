@@ -1,13 +1,6 @@
 from flask import Flask
-#from flask import Markup
-#from flask import Response
-#from flask import jsonify
-#from flask import redirect
-#from flask import render_template
 from flask import request
-#from flask import send_from_directory
 from flask import session
-#from flask import url_for
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -15,26 +8,6 @@ from flask.ext.security import Security
 from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.security import UserMixin
 from flask.ext.security import RoleMixin
-#from functools import wraps
-#from werkzeug import secure_filename
-
-#from ast import literal_eval
-#from docker import client
-#from sh import git
-#from sh import mv
-#from shutil import rmtree
-
-#from os import environ
-#from os import listdir
-#from os import mkdir
-#from os import path
-#from os import remove
-#from os import rmdir
-#from os import walk
-
-#import redis
-#import requests
-#import time
 
 #set defaults
 

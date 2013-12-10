@@ -20,4 +20,4 @@ ADD patch/auth.py /usr/local/lib/python2.7/dist-packages/docker/auth/auth.py
 EXPOSE 5000
 
 WORKDIR /wharf
-CMD ["python", "api.py"]
+CMD ["python", "runserver.py"]
