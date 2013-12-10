@@ -1,7 +1,7 @@
 [wharf](http://cglewis.github.io/wharf)
 =====
 
-![Wharf L](https://raw.github.com/cglewis/wharf/wharf/master/static/wharf_icon.png "Wharf")
+![Wharf L](https://raw.github.com/cglewis/wharf/master/wharf/static/wharf_icon.png "Wharf")
 
 Wharf is an open-source Software-as-a-Service platform built with the power of Docker to enable any Dockerfile and some basic metadata to become an on-demand service in the cloud.
 
