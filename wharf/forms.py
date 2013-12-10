@@ -223,8 +223,11 @@ def forms():
                 i = 0
                 # keeps track of the number of the service (if there is more than one)
                 j = 0
-                services = services.replace('&#39;', "'")
-                services = [ item.encode('ascii') for item in literal_eval(services) ]
+                try:
+                    services = services.replace('&#39;', "'")
+                    services = [ item.encode('ascii') for item in literal_eval(services) ]
+                except:
+                    pass
                 if not services:
                     return render_template("failed.html")
                 elif len(services) == 1:
@@ -311,8 +314,11 @@ def forms():
                 # something different is git repo versus docker index
                 # can all git repos be handled the same, or are there ones that might be different?
 
-            services = services.replace('&#39;', "'")
-            services = [ item.encode('ascii') for item in literal_eval(services) ]
+            try:
+                services = services.replace('&#39;', "'")
+                services = [ item.encode('ascii') for item in literal_eval(services) ]
+            except:
+                pass
             if len(services) > 1:
                 print services
                 counter = 0
