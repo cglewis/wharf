@@ -11,6 +11,7 @@ from flask.ext.security import RoleMixin
 
 #set defaults
 
+DOMAIN = "localhost"
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 SERVICES_FOLDER = '/home/vagrant/wharf/services/'
 SERVICE_DICT = {'description':'description.txt',
@@ -34,6 +35,7 @@ app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 # this should be re-generated for production use
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
+app.config['DOMAIN'] = DOMAIN
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SERVICES_FOLDER'] = SERVICES_FOLDER
 app.config['SERVICE_DICT'] = SERVICE_DICT

@@ -8,17 +8,10 @@ from os import path
 
 import redis
 
-DOMAIN = "localhost"
 HIPACHE_PORT="80"
 DOCKER_HOST="localhost"
 REDIS_HOST="localhost"
 REDIS_PORT=6379
-SERVICE_DICT = {'description':'description.txt',
-                'client':'client/client.txt',
-                'about':'html/about.html',
-                'body':'html/body.html',
-                'link':'html/link.html',
-                'dockerfile':'docker/Dockerfile'}
 
 r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
 c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)
@@ -31,8 +24,8 @@ def new(service):
     docker_path = ""
     if path.exists(path.join(app.config['SERVICES_FOLDER'],
                              service,
-                             SERVICE_DICT['dockerfile'])):
-        dockerfile = "services/"+service+"/"+SERVICE_DICT['dockerfile']
+                             app.config['SERVICE_DICT']['dockerfile'])):
+        dockerfile = "services/"+service+"/"+app.config['SERVICE_DICT']['dockerfile']
         docker_path = "services/"+service+"/docker/"
     elif path.exists(path.join(app.config['SERVICES_FOLDER'],
                              service,
@@ -54,13 +47,13 @@ def new(service):
             exposed_ports.append(key)
         for exposed_port in exposed_ports:
             container_port = c.port(container_id, exposed_port)
-            r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
-            r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
+            r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), container_id)
+            r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), "http://%s:%s" %(app.config['DOMAIN'], container_port))
             # !! TODO more than one url when there is more than one exposed_port
             if HIPACHE_PORT == "80":
-                url = "%s:%s" % (DOMAIN, container_port)
+                url = "%s:%s" % (app.config['DOMAIN'], container_port)
             else:
-                url = "%s:%s" % (DOMAIN, container_port)
+                url = "%s:%s" % (app.config['DOMAIN'], container_port)
         return jsonify(url=url)
 
     with open(dockerfile, 'r') as content_file:
@@ -95,12 +88,12 @@ def new(service):
     c.start(container_id)
     for exposed_port in exposed_ports:
         container_port = c.port(container_id, exposed_port)
-        r.rpush("frontend:%s.%s" % (container_id, DOMAIN), container_id)
-        r.rpush("frontend:%s.%s" % (container_id, DOMAIN), "http://%s:%s" %(DOMAIN, container_port))
+        r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), container_id)
+        r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), "http://%s:%s" %(app.config['DOMAIN'], container_port))
         # !! TODO more than one url when there is more than one exposed_port
         if HIPACHE_PORT == "80":
-            url = "%s:%s" % (DOMAIN, container_port)
+            url = "%s:%s" % (app.config['DOMAIN'], container_port)
         else:
-            url = "%s:%s" % (DOMAIN, container_port)
+            url = "%s:%s" % (app.config['DOMAIN'], container_port)
 
     return jsonify(url=url)

@@ -2,13 +2,6 @@ from wharf import app
 
 from flask import render_template
 
-SERVICE_DICT = {'description':'description.txt',
-                'client':'client/client.txt',
-                'about':'html/about.html',
-                'body':'html/body.html',
-                'link':'html/link.html',
-                'dockerfile':'docker/Dockerfile'}
-
 @app.route('/details/<service>/<url>')
 def details(url, service):
     # !! TODO try/except
@@ -16,13 +9,13 @@ def details(url, service):
     test = ""
     link = ""
     link_name = ""
-    link_path = "services/"+service+"/"+SERVICE_DICT['link']
+    link_path = "services/"+service+"/"+app.config['SERVICE_DICT']['link']
     with open(link_path, 'r') as content_file:
         link = content_file.read()
     link_a = link.split(" ", 1)
     link = link_a[0]
     link_name = link_a[1]
-    client_path = "services/"+service+"/"+SERVICE_DICT['client']
+    client_path = "services/"+service+"/"+app.config['SERVICE_DICT']['client']
     with open(client_path, 'r') as content_file:
         client = content_file.read()
     client_a = client.split("\n")

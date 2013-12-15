@@ -13,14 +13,6 @@ from os import path
 from os import remove
 from os import rmdir
 
-DOMAIN = "localhost"
-SERVICE_DICT = {'description':'description.txt',
-                'client':'client/client.txt',
-                'about':'html/about.html',
-                'body':'html/body.html',
-                'link':'html/link.html',
-                'dockerfile':'docker/Dockerfile'}
-
 @app.route('/forms', methods=['POST'])
 def forms():
     # !! TODO try/except
@@ -123,10 +115,10 @@ def forms():
                 if j == 0:
                     j = ""
                 if filename.rsplit('.', 1)[1] == "zip":
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                         f.write(description)
                 elif filename.rsplit('.', 1)[1] == "gz":
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                         f.write(description)
             if "client" in missing_files:
                 client = ""
@@ -143,7 +135,7 @@ def forms():
                 if filename.rsplit('.', 1)[1] == "zip":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                         f.write(clientLanguage+"\n")
                         f.write(clientFilename)
                     with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
@@ -151,7 +143,7 @@ def forms():
                 elif filename.rsplit('.', 1)[1] == "gz":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                         f.write(clientLanguage+"\n")
                         f.write(clientFilename)
                     with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
@@ -167,12 +159,12 @@ def forms():
                 if filename.rsplit('.', 1)[1] == "zip":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                         f.write(about)
                 elif filename.rsplit('.', 1)[1] == "gz":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                         f.write(about)
             if "body" in missing_files:
                 body = ""
@@ -185,12 +177,12 @@ def forms():
                 if filename.rsplit('.', 1)[1] == "zip":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                         f.write(body)
                 elif filename.rsplit('.', 1)[1] == "gz":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                         f.write(body)
             if "link" in missing_files:
                 link = "#"
@@ -205,12 +197,12 @@ def forms():
                 if filename.rsplit('.', 1)[1] == "zip":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                         f.write(link+" "+linkName)
                 elif filename.rsplit('.', 1)[1] == "gz":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                         f.write(link+" "+linkName)
         elif url:
             j_array = []
@@ -341,10 +333,10 @@ def forms():
                             index_service = service.replace("/", "-")
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['description'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                                 f.write(description)
                         elif url.rsplit('.', 1)[1] == "git":
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['description'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                                 f.write(description)
                     else:
                         if j_array[counter] == 0:
@@ -356,7 +348,7 @@ def forms():
                             index_service = service.replace("/", "-")
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['description'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                                 f.write(description)
 
                     if "client" in missing_files:
@@ -378,7 +370,7 @@ def forms():
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/client"):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/client")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['client'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                                 f.write(clientLanguage+"\n")
                                 f.write(clientFilename)
                             with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/client/"+clientFilename, 'w') as f:
@@ -386,7 +378,7 @@ def forms():
                         elif url.rsplit('.', 1)[1] == "git":
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['client'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                                 f.write(clientLanguage+"\n")
                                 f.write(clientFilename)
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client/"+clientFilename, 'w') as f:
@@ -406,12 +398,12 @@ def forms():
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['about'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                                 f.write(about)
                         elif url.rsplit('.', 1)[1] == "git":
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['about'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                                 f.write(about)
                     if "body" in missing_files:
                         body = ""
@@ -428,12 +420,12 @@ def forms():
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['body'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                                 f.write(body)
                         elif url.rsplit('.', 1)[1] == "git":
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['body'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                                 f.write(body)
                     if "link" in missing_files:
                         link = "#"
@@ -452,12 +444,12 @@ def forms():
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
                             if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+SERVICE_DICT['link'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                                 f.write(link+" "+linkName)
                         elif url.rsplit('.', 1)[1] == "git":
                             if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
                                 mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+SERVICE_DICT['link'], 'w') as f:
+                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                                 f.write(link+" "+linkName)
                     counter += 1
             else:
@@ -477,10 +469,10 @@ def forms():
                         index_service = services[0].replace("/", "-")
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                             f.write(description)
                     elif url.rsplit('.', 1)[1] == "git":
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                             f.write(description)
                 else:
                     if j == 0:
@@ -492,7 +484,7 @@ def forms():
                         index_service = services[0].replace("/", "-")
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['description'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                             f.write(description)
                 if "client" in missing_files:
                     client = ""
@@ -513,7 +505,7 @@ def forms():
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/client"):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/client")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                             f.write(clientLanguage+"\n")
                             f.write(clientFilename)
                         with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/client/"+clientFilename, 'w') as f:
@@ -521,7 +513,7 @@ def forms():
                     elif url.rsplit('.', 1)[1] == "git":
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['client'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                             f.write(clientLanguage+"\n")
                             f.write(clientFilename)
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
@@ -541,12 +533,12 @@ def forms():
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                             f.write(about)
                     elif url.rsplit('.', 1)[1] == "git":
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['about'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
                             f.write(about)
                 if "body" in missing_files:
                     body = ""
@@ -563,12 +555,12 @@ def forms():
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                             f.write(body)
                     elif url.rsplit('.', 1)[1] == "git":
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['body'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
                             f.write(body)
                 if "link" in missing_files:
                     link = "#"
@@ -587,13 +579,13 @@ def forms():
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
                         if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                             f.write(link+" "+linkName)
                     elif url.rsplit('.', 1)[1] == "git":
                         if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
                             mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+SERVICE_DICT['link'], 'w') as f:
+                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                             f.write(link+" "+linkName)
     except:
         pass
-    return jsonify(url=DOMAIN)
+    return jsonify(url=app.config['DOMAIN'])

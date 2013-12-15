@@ -22,12 +22,6 @@ import time
 import zipfile
 
 ALLOWED_EXTENSIONS = set(['gz', 'zip'])
-SERVICE_DICT = {'description':'description.txt',
-                'client':'client/client.txt',
-                'about':'html/about.html',
-                'body':'html/body.html',
-                'link':'html/link.html',
-                'dockerfile':'docker/Dockerfile'}
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -61,7 +55,7 @@ def index():
                             #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
                             missing_files = {}
-                            for key,value in SERVICE_DICT.items():
+                            for key,value in app.config['SERVICE_DICT'].items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              filename.rsplit('.', 1)[0],
                                                              filename.rsplit('.', 1)[0],
@@ -120,7 +114,7 @@ def index():
                             #    allow exception for dockerfile, check at root as well
                             # check for existence of necessary files
                             missing_files = {}
-                            for key,value in SERVICE_DICT.items():
+                            for key,value in app.config['SERVICE_DICT'].items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              filename.rsplit('.', 2)[0],
                                                              filename.rsplit('.', 2)[0],
@@ -193,7 +187,7 @@ def index():
                                                  "Dockerfile")):
                             # check for existence of necessary files
                             missing_files = {}
-                            for key,value in SERVICE_DICT.items():
+                            for key,value in app.config['SERVICE_DICT'].items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
                                                              value)):
@@ -244,10 +238,10 @@ def index():
                         # check for dockerfile assuming repo is the services folder
                         elif path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                  (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
-                                                 SERVICE_DICT['dockerfile'])):
+                                                 app.config['SERVICE_DICT']['dockerfile'])):
                             # check for existence of necessary files
                             missing_files = {}
-                            for key,value in SERVICE_DICT.items():
+                            for key,value in app.config['SERVICE_DICT'].items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                              (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
                                                              value)):
@@ -312,7 +306,7 @@ def index():
                                                          service_dir, "Dockerfile")):
                                     # check for existence of necessary files
                                     missing_files = {}
-                                    for key,value in SERVICE_DICT.items():
+                                    for key,value in app.config['SERVICE_DICT'].items():
                                         if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                                      (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
                                                                      service_dir,
@@ -369,11 +363,11 @@ def index():
                                 # could be more than one
                                 elif path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                            (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
-                                                           service_dir, SERVICE_DICT['dockerfile'])):
+                                                           service_dir, app.config['SERVICE_DICT']['dockerfile'])):
                                     print "dockerfile in services folder"
                                     # check for existence of necessary files
                                     missing_files = {}
-                                    for key,value in SERVICE_DICT.items():
+                                    for key,value in app.config['SERVICE_DICT'].items():
                                         if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
                                                                      (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
                                                                      service_dir,
@@ -458,7 +452,7 @@ def index():
                         if repo == "":
                             return render_template("failed.html")
                         missing_files = {}
-                        for key,value in SERVICE_DICT.items():
+                        for key,value in app.config['SERVICE_DICT'].items():
                             missing_files[key] = value
                         del missing_files["dockerfile"]
                         if desc != "":
@@ -485,7 +479,7 @@ def index():
         last_modified = time.ctime(path.getmtime("services/"+service))
         description = ""
         # !! TODO try/except
-        description_path = "services/"+service+"/"+SERVICE_DICT['description']
+        description_path = "services/"+service+"/"+app.config['SERVICE_DICT']['description']
         with open(description_path, 'r') as content_file:
             description = content_file.read()
         row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td></tr>'
