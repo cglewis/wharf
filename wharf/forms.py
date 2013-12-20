@@ -321,7 +321,7 @@ def forms():
                     description = ""
                     if "description" in missing_files:
                         try:
-                            description = request.json['description']
+                            description = request.json['description'+str(counter)]
                         except:
                             pass
                         if j_array[counter] == 0:
@@ -356,9 +356,9 @@ def forms():
                         clientLanguage = ""
                         clientFilename = "dummy.txt"
                         try:
-                            client = request.json['client']
-                            clientLanguage = request.json['clientLanguage']
-                            clientFilename = request.json['clientFilename']
+                            client = request.json['client'+str(counter)]
+                            clientLanguage = request.json['clientLanguage'+str(counter)]
+                            clientFilename = request.json['clientFilename'+str(counter)]
                         except:
                             pass
                         if j_array[counter] == 0:
@@ -386,7 +386,7 @@ def forms():
                     if "about" in missing_files:
                         about = ""
                         try:
-                            about = request.json['about']
+                            about = request.json['about'+str(counter)]
                         except:
                             pass
                         if j_array[counter] == 0:
@@ -408,7 +408,7 @@ def forms():
                     if "body" in missing_files:
                         body = ""
                         try:
-                            body = request.json['body']
+                            body = request.json['body'+str(counter)]
                         except:
                             pass
                         if j_array[counter] == 0:
@@ -431,8 +431,8 @@ def forms():
                         link = "#"
                         linkName = "None"
                         try:
-                            link = request.json['link']
-                            linkName = request.json['linkName']
+                            link = request.json['link'+str(counter)]
+                            linkName = request.json['linkName'+str(counter)]
                         except:
                             pass
                         if j_array[counter] == 0:

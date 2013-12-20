@@ -135,7 +135,7 @@
                 var tableRowsClass = $('.table-list-search tbody tr');
                 $('.search-sf').remove();
                 tableRowsClass.each( function(i, val) {
-        
+
                     //Lower text for case insensitive
                     var rowText = $(val).text().toLowerCase();
                     var inputText = $(that).val().toLowerCase();
@@ -155,7 +155,6 @@
                     {
                         //hide rows
                         tableRowsClass.eq(i).hide();
-                
                     }
                     else
                     {
