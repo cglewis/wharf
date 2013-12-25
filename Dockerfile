@@ -12,6 +12,7 @@ RUN ln -s /bin/true /sbin/initctl
 
 RUN apt-get install -y git
 RUN apt-get install -y python-setuptools
+RUN apt-get install -y redis-server
 RUN easy_install pip
 ADD . /wharf
 RUN pip install -r /wharf/requirements.txt

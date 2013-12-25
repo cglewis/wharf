@@ -473,7 +473,7 @@ def index():
         return redirect(url_for('index'))
 
     row = ""
-    services = listdir("services")
+    services = [name for name in listdir("services") if path.isdir(path.join("services", name))]
     for service in services:
         last_modified = ""
         last_modified = time.ctime(path.getmtime("services/"+service))
