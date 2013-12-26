@@ -96,3 +96,4 @@ import wharf.index
 import wharf.new
 import wharf.robot
 import wharf.saas
+import wharf.profile

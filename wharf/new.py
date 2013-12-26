@@ -1,11 +1,14 @@
 from wharf import app
 
 from flask import jsonify
+from flask.ext.login import current_user
 
 from docker import client
 
 from os import path
 
+import datetime
+import json
 import redis
 
 HIPACHE_PORT="80"
@@ -54,6 +57,14 @@ def new(service):
                 url = "%s:%s" % (app.config['DOMAIN'], container_port)
             else:
                 url = "%s:%s" % (app.config['DOMAIN'], container_port)
+        today = datetime.datetime.now()
+        today_str = '{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}:{0.minute:02d}:{0.second:02d}.{0.microsecond:06d}'.format(today)
+        hmap = {}
+        hmap['service'] = service
+        hmap['timestamp'] = today_str
+        hmap['owned_by'] = current_user.email
+        r.hmset(url, hmap)
+        r.rpush(current_user.email, url)
         return jsonify(url=url)
 
     with open(dockerfile, 'r') as content_file:
@@ -96,4 +107,12 @@ def new(service):
         else:
             url = "%s:%s" % (app.config['DOMAIN'], container_port)
 
+    today = datetime.datetime.now()
+    today_str = '{0.year}-{0.month:02d}-{0.day:02d} {0.hour:02d}:{0.minute:02d}:{0.second:02d}.{0.microsecond:06d}'.format(today)
+    hmap = {}
+    hmap['service'] = service
+    hmap['timestamp'] = today_str
+    hmap['owned_by'] = current_user.email
+    r.hmset(url, hmap)
+    r.rpush(current_user.email, url)
     return jsonify(url=url)
