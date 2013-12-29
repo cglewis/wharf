@@ -12,7 +12,8 @@ from flask.ext.security import RoleMixin
 #set defaults
 
 DOMAIN = "localhost"
-UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
 SERVICES_FOLDER = '/home/vagrant/wharf/services/'
 SERVICE_DICT = {'description':'description.txt',
                 'client':'client/client.txt',
@@ -20,6 +21,7 @@ SERVICE_DICT = {'description':'description.txt',
                 'body':'html/body.html',
                 'link':'html/link.html',
                 'dockerfile':'docker/Dockerfile'}
+UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -36,9 +38,11 @@ app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
 app.config['DOMAIN'] = DOMAIN
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['REDIS_HOST'] = REDIS_HOST
+app.config['REDIS_PORT'] = REDIS_PORT
 app.config['SERVICES_FOLDER'] = SERVICES_FOLDER
 app.config['SERVICE_DICT'] = SERVICE_DICT
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_object('wharf.config.email')
 app.debug = True
 
