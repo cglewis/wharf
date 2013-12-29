@@ -13,10 +13,8 @@ import redis
 
 HIPACHE_PORT="80"
 DOCKER_HOST="localhost"
-REDIS_HOST="localhost"
-REDIS_PORT=6379
 
-r = redis.StrictRedis(host=REDIS_HOST, port=int(REDIS_PORT))
+r = redis.StrictRedis(host=app.config['REDIS_HOST'], port=int(app.config['REDIS_PORT']))
 c = client.Client(version="1.6", base_url='http://%s:4243' % DOCKER_HOST)
 
 @app.route('/new/<service>', methods=["POST"])
