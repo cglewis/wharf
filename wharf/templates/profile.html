@@ -28,6 +28,7 @@
                     <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
                     <li><a href="http://docker.io">Docker</a></li>
                     {% if current_user.is_authenticated() %}
+                      <li><a href="{{ url_for('profile') }}">Profile</a></li>
                       <li><a href="{{ url_for('security.logout') }}">Logout</a></li>
                     {% else %}
                       <li><a href="{{ url_for('security.login') }}">Login</a></li>
