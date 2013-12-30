@@ -1,13 +1,11 @@
 from wharf import app
 
+from ast import literal_eval
 from flask import jsonify
 from flask import render_template
 from flask import request
-
-from ast import literal_eval
 from sh import mv
 from shutil import rmtree
-
 from os import mkdir
 from os import path
 from os import remove

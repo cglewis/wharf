@@ -1,3 +1,5 @@
+from config import LANGUAGES
+
 from flask import Flask
 from flask import request
 from flask import session
@@ -9,8 +11,9 @@ from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.security import UserMixin
 from flask.ext.security import RoleMixin
 
-#set defaults
+# set defaults
 
+DOCKER_HOST="localhost"
 DOMAIN = "localhost"
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
@@ -37,13 +40,14 @@ app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
 # this should be re-generated for production use
 app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
+app.config['DOCKER_HOST'] = DOCKER_HOST
 app.config['DOMAIN'] = DOMAIN
 app.config['REDIS_HOST'] = REDIS_HOST
 app.config['REDIS_PORT'] = REDIS_PORT
 app.config['SERVICES_FOLDER'] = SERVICES_FOLDER
 app.config['SERVICE_DICT'] = SERVICE_DICT
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config.from_object('wharf.config.email')
+app.config.from_object('wharf.email_config.email')
 app.debug = True
 
 # Setup mail extension
@@ -52,18 +56,12 @@ mail = Mail(app)
 # Setup babel
 babel = Babel(app)
 
-# Create database connection object
-db = SQLAlchemy(app)
-
 @babel.localeselector
 def get_locale():
-    override = request.args.get('lang')
+    return request.accept_languages.best_match(LANGUAGES.keys())
 
-    if override:
-        session['lang'] = override
-
-    rv = session.get('lang', 'en')
-    return rv
+# Create database connection object
+db = SQLAlchemy(app)
 
 # Define models
 roles_users = db.Table('roles_users',
@@ -96,8 +94,9 @@ db.create_all()
 import wharf.details
 import wharf.favicon
 import wharf.forms
+import wharf.kill
 import wharf.index
 import wharf.new
+import wharf.profile
 import wharf.robot
 import wharf.saas
-import wharf.profile

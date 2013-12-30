@@ -5,16 +5,14 @@ from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-from werkzeug import secure_filename
-
-from sh import git
-from sh import mv
-
 from os import listdir
 from os import path
 from os import remove
 from os import rmdir
 from os import walk
+from sh import git
+from sh import mv
+from werkzeug import secure_filename
 
 import requests
 import tarfile

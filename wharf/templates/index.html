@@ -17,38 +17,38 @@
         <script src="/static/js/ladda.min.js"></script>
         <script src="/static/js/fileinput.js"></script>
 
-        <title>Wharf</title>
+        <title>{{ _('Wharf') }}</title>
     </head>
 
     <body>
-        <a href="https://github.com/cglewis/wharf"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="Fork me on GitHub"></a>
+        <a href="https://github.com/cglewis/wharf"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png" alt="{{ _('Fork me on GitHub') }}"></a>
         <div class="container-narrow">
             <!-- nav -->
             <div class="masthead">
                 <ul class="nav nav-pills pull-right">
-                    <li class="active"><a href="/">Home</a></li>
-                    <li><a href="https://github.com/cglewis/wharf">Wharf</a></li>
-                    <li><a href="http://docker.io">Docker</a></li>
+                    <li class="active"><a href="/">{{ _('Home') }}</a></li>
+                    <li><a href="https://github.com/cglewis/wharf">{{ _('Wharf') }}</a></li>
+                    <li><a href="http://docker.io">{{ _('Docker') }}</a></li>
                     {% if current_user.is_authenticated() %}
-                      <li><a href="{{ url_for('profile') }}">Profile</a></li>
-                      <li><a href="{{ url_for('security.logout') }}">Logout</a></li>
+                      <li><a href="{{ url_for('profile') }}">{{ _('Profile') }}</a></li>
+                      <li><a href="{{ url_for('security.logout') }}">{{ _('Logout') }}</a></li>
                     {% else %}
-                      <li><a href="{{ url_for('security.login') }}">Login</a></li>
+                      <li><a href="{{ url_for('security.login') }}">{{ _('Login') }}</a></li>
                     {% endif %}
                 </ul>
-                <h3 class="muted"><img src="static/wharf_icon.png" alt="Wharf" height="125"></h3>
+                <h3 class="muted"><img src="static/wharf_icon.png" alt="{{ _('Wharf') }}" height="125"></h3>
             </div>
 
             <hr>
 
             <div class="jubotron">
-                <h1>Let's get started with Wharf!</h1>
-                <p class="lead">Try one of the services already available below on Wharf, or add your own service in the form of a Dockerfile and some additional metadata, see some example templates <a href="https://github.com/cglewis/wharf-services-example">here</a>.</p>
+                <h1>{{ _("Let's get started with Wharf!") }}</h1>
+                <p class="lead">{{ _("Try one of the services already available below on Wharf, or add your own service in the form of a Dockerfile and some additional metadata, see some example templates") }} <a href="https://github.com/cglewis/wharf-services-example">{{ _('here') }}</a>.</p>
                 <div class="span6">
                   <form action="#" method="get">
                     <div class="input-group">
                       <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
-                      <input class="form-control" id="system-search" name="q" placeholder="Search for" required>
+                      <input class="form-control" id="system-search" name="q" placeholder="{{ _('Search for') }}" required>
                       <span class="input-group-btn">
                         <button type="submit" class="btn btn-primary">
                           <i class="glyphicon glyphicon-search"></i>
@@ -59,7 +59,7 @@
                 </div>
                 <table class="table table-striped table-bordered table-hover table-list-search">
                   <thead>
-                    <tr><th>Service</th><th>Description</th><th>Last Updated</th></tr>
+                    <tr><th>{{ _('Service') }}</th><th>{{ _('Description') }}</th><th>{{ _('Last Updated') }}</th></tr>
                   </thead>
                   <tbody data-link="row" class="rowlink">
                     {{ row }}
@@ -71,9 +71,9 @@
                 <div class="span6">
                   <form action="" method="post" id="wharf_url_form" name="mc-embedded-subscribe-form" class="validate" novalidate>
                     <div class="input-group">
-                      <input type="text" value="" placeholder="Wharf URL (GitHub Repo or Docker Index Repo)" name="wharf_url" class="required email form-control" id="mce-EMAIL">
+                      <input type="text" value="" placeholder="{{ _('Wharf URL (GitHub Repo or Docker Index Repo)') }}" name="wharf_url" class="required email form-control" id="mce-EMAIL">
                       <span class="input-group-btn">
-                        <input type="submit" class="btn btn-primary ladda-button" data-style="expand-right" value="Import" name="subscribe" id="mc-embedded-subscribe">
+                        <input type="submit" class="btn btn-primary ladda-button" data-style="expand-right" value="{{ _('Import') }}" name="subscribe" id="mc-embedded-subscribe">
                       </span>
                     </div>
                   </form>
@@ -81,10 +81,10 @@
                 <div class="span6">
                     <form action="" method=post enctype=multipart/form-data>
                   <div class="fileinput fileinput-new" data-provides="fileinput">
-                    <span class="btn btn-primary btn-file"><span class="fileinput-new">Select file</span><span class="fileinput-exists">Change</span><input type=file name=file></span></span>
+                    <span class="btn btn-primary btn-file"><span class="fileinput-new">{{ _('Select file') }}</span><span class="fileinput-exists">{{ _('Change') }}</span><input type=file name=file></span></span>
                     <span class="fileinput-filename"></span>
                     <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">&times;</a>
-                    <span class="input-btn"><input type=submit class="btn btn-primary ladda-button" value=Upload id="file-upload"></span>
+                    <span class="input-btn"><input type=submit class="btn btn-primary ladda-button" value={{ _('Upload') }} id="file-upload"></span>
                   </div>
                     </form>
                 </div>
@@ -92,26 +92,26 @@
 
             <div class="row-fluid marketing">
                 <div class="span6 well">
-                    <h4>About <a href="https://github.com/cglewis/wharf">Wharf</a></h4>
-                    <p>Wharf is an open-source Software-as-a-Service platform built with the power of docker to enable any Dockerfile and some basic metadata to become an on-demand service in the cloud.</p>
+                    <h4>{{ _('About') }} <a href="https://github.com/cglewis/wharf">{{ _('Wharf') }}</a></h4>
+                    <p>{{ _("Wharf is an open-source Software-as-a-Service platform built with the power of docker to enable any Dockerfile and some basic metadata to become an on-demand service in the cloud.") }}</p>
                 </div>
 
                 <div class="span6 well">
-                    <h4>About <a href="http://docker.io">Docker</a></h4>
-                    <p>Docker is an open-source engine which automates the deployment of applications as highly portable, self-sufficient containers which are independent of hardware, language, framework, packaging system and hosting provider.</p>
+                    <h4>{{ _('About') }} <a href="http://docker.io">{{ _('Docker') }}</a></h4>
+                    <p>{{ _("Docker is an open-source engine which automates the deployment of applications as highly portable, self-sufficient containers which are independent of hardware, language, framework, packaging system and hosting provider.") }}</p>
                 </div>
             </div>
 
             <div class="footer">
                 <div class="row-fluid marketing">
                     <div class="span3 well">
-                        <p>Powered by <a href="http://docker.io">Docker</a>.</p>
+                        <p>{{ _('Powered by') }} <a href="http://docker.io">{{ _('Docker') }}</a>.</p>
                     </div>
                     <div class="span5 well">
-                        <p class="muted credit">&copy; Charlie Lewis 2013 | <a href="mailto:charlie.lewis42@gmail.com">Contact Me</a> | <a href="https://github.com/cglewis">GitHub</a> | <a href="http://www.linkedin.com/pub/charles-lewis/8/a9/64a">LinkedIn</a>
+                        <p class="muted credit">{{ _('&copy; Charlie Lewis 2013') }} | <a href="mailto:charlie.lewis42@gmail.com">{{ _('Contact Me') }}</a> | <a href="https://github.com/cglewis">{{ _('GitHub') }}</a> | <a href="http://www.linkedin.com/pub/charles-lewis/8/a9/64a">{{ _('LinkedIn') }}</a>
                     </div>
                     <div class="span4 well">
-                        <p class="muted credit">Origin based on <a href="https://github.com/keeb/any-saas">any-saas</a> by Nick Stinemates</p>
+                        <p class="muted credit">{{ _('Origin based on') }} <a href="https://github.com/keeb/any-saas">{{ _('any-saas') }}</a> {{ _('by Nick Stinemates') }}</p>
                     </div>
                 </div>
             </div>
@@ -119,10 +119,10 @@
     </body>
     <script type="text/javascript">
         $("#mc-embedded-subscribe").click(function(e) {
-            $("#mc-embedded-subscribe").attr('value','Importing...');
+            $("#mc-embedded-subscribe").attr('value','{{ _('Importing...') }}');
         });
         $("#file-upload").click(function(e) {
-            $("#file-upload").attr('value','Uploading...');
+            $("#file-upload").attr('value','{{ _('Uploading...') }}');
         });
         Ladda.bind( 'input[type=submit]' );
         $(document).ready(function() {
@@ -143,7 +143,7 @@
                     if(inputText != '')
                     {
                         $('.search-query-sf').remove();
-                        tableBody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>Searching for: "'
+                        tableBody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>{{ _('Searching for: ') }}"'
                             + $(that).val()
                             + '"</strong></td></tr>');
                     }
@@ -166,7 +166,7 @@
                 //all tr elements are hidden
                 if(tableRowsClass.children(':visible').length == 0)
                 {
-                    tableBody.append('<tr class="search-sf"><td class="text-muted" colspan="6">No entries found.</td></tr>');
+                    tableBody.append('<tr class="search-sf"><td class="text-muted" colspan="6">{{ _('No entries found.') }}</td></tr>');
                 }
             });
         });
