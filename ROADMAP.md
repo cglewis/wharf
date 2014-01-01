@@ -5,7 +5,7 @@ This is a high level overview of the direction I would like to take Wharf next.
 
 ## Persistence
 
-For Wharf to be usable outside just an experiment or prototype, it needs to be able to let services persist, and with that the data associated with the services via Docker Volumes.  Along with persisting the idea of a user being able to manage the services that were spun up also needs to be better addressed that Wharf currently handles.
+For Wharf to be usable outside just an experiment or prototype, it needs to be able to let services persist, and with that the data associated with the services via Docker Volumes.  Along with persisting the idea of a user being able to manage the services that were spun up also needs to be better addressed than Wharf currently handles.
 
 
 ## Sharing
