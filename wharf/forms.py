@@ -41,9 +41,28 @@ def move_services(filename, j, num_ext):
     rmtree(path.join(app.config['UPLOAD_FOLDER'], file_path))
     return j
 
+def add_metadata(meta, filename, j, num_ext):
+    meta_path = app.config['SERVICES_FOLDER']+filename.rsplit('.', num_ext)[0]+str(j)
+    if not path.exists(meta_path+"/html"):
+        mkdir(meta_path+"/html")
+    with open(meta_path+"/"+app.config['SERVICE_DICT'][metadata], 'w') as f:
+        f.write(meta)
+
+def missing_metadata(j, filename, metadata):
+    meta = ""
+    try:
+        meta = request.json[metadata]
+    except:
+        pass
+    if j == 0:
+        j = ""
+    if filename.rsplit('.', 1)[1] == "zip":
+        add_metadata(meta, filename, j, 1)
+    elif filename.rsplit('.', 1)[1] == "gz":
+        add_metadata(meta, filename, j, 2)
+
 @app.route('/forms', methods=['POST'])
 def forms():
-    # !! TODO try/except
     try:
         filename = request.json['filename']
         url = request.json['url']
@@ -84,57 +103,27 @@ def forms():
                 if j == 0:
                     j = ""
                 if filename.rsplit('.', 1)[1] == "zip":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
+                    meta_path = app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)
+                    if not path.exists(meta_path+"/client"):
+                        mkdir(meta_path+"/client")
+                    with open(meta_path+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                         f.write(clientLanguage+"\n")
                         f.write(clientFilename)
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                    with open(meta_path+"/client/"+clientFilename, 'w') as f:
                         f.write(client)
                 elif filename.rsplit('.', 1)[1] == "gz":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
+                    meta_path = app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)
+                    if not path.exists(meta_path+"/client"):
+                        mkdir(meta_path+"/client")
+                    with open(meta_path+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
                         f.write(clientLanguage+"\n")
                         f.write(clientFilename)
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
+                    with open(meta_path+"/client/"+clientFilename, 'w') as f:
                         f.write(client)
             if "about" in missing_files:
-                about = ""
-                try:
-                    about = request.json['about']
-                except:
-                    pass
-                if j == 0:
-                    j = ""
-                if filename.rsplit('.', 1)[1] == "zip":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                        f.write(about)
-                elif filename.rsplit('.', 1)[1] == "gz":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                        f.write(about)
+                missing_metadata(j, filename, "about")
             if "body" in missing_files:
-                body = ""
-                try:
-                    body = request.json['body']
-                except:
-                    pass
-                if j == 0:
-                    j = ""
-                if filename.rsplit('.', 1)[1] == "zip":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                        f.write(body)
-                elif filename.rsplit('.', 1)[1] == "gz":
-                    if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html"):
-                        mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/html")
-                    with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                        f.write(body)
+                missing_metadata(j, filename, "body")
             if "link" in missing_files:
                 link = "#"
                 linkName = "None"
