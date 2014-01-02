@@ -19,11 +19,36 @@ import tarfile
 import time
 import zipfile
 
-ALLOWED_EXTENSIONS = set(['gz', 'zip'])
-
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1] in set(['gz', 'zip'])
+
+def move_services(filename, num_ext):
+    # move to services folder
+
+    file_path = filename.rsplit('.', num_ext)[0]
+    src_path = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path)
+    dest_path = app.config['SERVICES_FOLDER']
+
+    i = 0
+    while i != -1:
+        try:
+            src_path_i = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path+str(i))
+            src_path_ii = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path+str(i-1))
+            if i == 0:
+                mv(src_path, dest_path)
+            elif i == 1:
+                mv(src_path, dest_path_i)
+                mv(dest_path_i, dest_path)
+            else:
+                mv(dest_path_ii, dest_path_i)
+                mv(dest_path_i, dest_path)
+            i = -1
+        except:
+            i += 1
+
+    # remove leftover files in tmp
+    remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+    rmtree(path.join(app.config['UPLOAD_FOLDER'], file_path))
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -44,9 +69,10 @@ def index():
             try:
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    file.save(path.join(app.config['UPLOAD_FOLDER'], filename))
+                    file_path = path.join(app.config['UPLOAD_FOLDER'], filename)
+                    file.save(file_path)
                     if filename.rsplit('.', 1)[1] == "zip":
-                        with zipfile.ZipFile(path.join(app.config['UPLOAD_FOLDER'], filename), 'r') as service_zip:
+                        with zipfile.ZipFile(file_path, 'r') as service_zip:
                             service_zip.extractall(path.join(app.config['UPLOAD_FOLDER'],
                                                              filename.rsplit('.', 1)[0]))
                             # !! TODO
@@ -64,45 +90,13 @@ def index():
                                 if "dockerfile" in missing_files:
                                     return render_template("failed.html")
                                 else:
-                                    return render_template("forms.html", services=services, missing_files=missing_files, filename=filename, indexDesc=desc, url=url)
-
-                            # move to services folder
-                            i = 0
-                            while i != -1:
-                                try:
-                                    if i == 0:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     filename.rsplit('.', 1)[0]),
-                                           app.config['SERVICES_FOLDER'])
-                                    elif i == 1:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     filename.rsplit('.', 1)[0]),
-                                           path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     (filename.rsplit('.', 1)[0])+str(i)))
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     (filename.rsplit('.', 1)[0])+str(i)),
-                                           app.config['SERVICES_FOLDER'])
-                                    else:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     (filename.rsplit('.', 1)[0])+str(i-1)),
-                                           path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     (filename.rsplit('.', 1)[0])+str(i)))
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 1)[0],
-                                                     (filename.rsplit('.', 1)[0])+str(i)),
-                                           app.config['SERVICES_FOLDER'])
-                                    i = -1
-                                except:
-                                    i += 1
-                            # remove leftover files in tmp
-                            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-                            rmdir(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
+                                    return render_template("forms.html",
+                                                           services=services,
+                                                           missing_files=missing_files,
+                                                           filename=filename,
+                                                           indexDesc=desc,
+                                                           url=url)
+                            move_services(filename, 1)
 
                     elif filename.rsplit('.', 1)[1] == "gz":
                         with tarfile.open(path.join(app.config['UPLOAD_FOLDER'], filename)) as service_gz:
@@ -123,45 +117,13 @@ def index():
                                 if "dockerfile" in missing_files:
                                     return render_template("failed.html")
                                 else:
-                                    return render_template("forms.html", services=services, missing_files=missing_files, filename=filename, indexDesc=desc, url=url)
-
-                            # move to services folder
-                            i = 0
-                            while i != -1:
-                                try:
-                                    if i == 0:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     filename.rsplit('.', 2)[0]),
-                                           app.config['SERVICES_FOLDER'])
-                                    elif i == 1:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     filename.rsplit('.', 2)[0]),
-                                           path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     (filename.rsplit('.', 2)[0])+str(i)))
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     (filename.rsplit('.', 2)[0])+str(i)),
-                                           app.config['SERVICES_FOLDER'])
-                                    else:
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     (filename.rsplit('.', 2)[0])+str(i-1)),
-                                           path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     (filename.rsplit('.', 2)[0])+str(i)))
-                                        mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     filename.rsplit('.', 2)[0],
-                                                     (filename.rsplit('.', 2)[0])+str(i)),
-                                           app.config['SERVICES_FOLDER'])
-                                    i = -1
-                                except:
-                                    i += 1
-                            # remove leftover files in tmp
-                            remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-                            rmdir(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+                                    return render_template("forms.html",
+                                                           services=services,
+                                                           missing_files=missing_files,
+                                                           filename=filename,
+                                                           indexDesc=desc,
+                                                           url=url)
+                            move_services(filename, 2)
                     else:
                         return render_template("failed.html")
                     # !! TODO
