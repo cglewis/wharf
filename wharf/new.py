@@ -74,9 +74,9 @@ def new(service):
                     for port in line_a[1:]:
                         exposed_ports.append(port)
         container = []
+        image_id_path = "services/"+service+"/.image_id"
         try:
             image_id = "JUNK"
-            image_id_path = "services/"+service+"/.image_id"
             with open(image_id_path, 'r') as content_file:
                 image_id = content_file.read()
             container = c.create_container(image_id, ports=exposed_ports)
@@ -85,7 +85,6 @@ def new(service):
             image_id, response = c.build(path=docker_path, tag=service)
             # !! TODO leaving in for debugging for now
             print image_id, response
-            image_id_path = "services/"+service+"/.image_id"
             with open(image_id_path, 'w') as content_file:
                 content_file.write(image_id)
             container = c.create_container(image_id, ports=exposed_ports)
