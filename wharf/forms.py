@@ -4,12 +4,42 @@ from ast import literal_eval
 from flask import jsonify
 from flask import render_template
 from flask import request
-from sh import mv
-from shutil import rmtree
 from os import mkdir
 from os import path
 from os import remove
 from os import rmdir
+from sh import mv
+from shutil import rmtree
+
+def move_services(filename, j, num_ext):
+    # move to services folder
+
+    file_path = filename.rsplit('.', num_ext)[0]
+    src_path = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path)
+    dest_path = app.config['SERVICES_FOLDER']
+
+    i = 0
+    while i != -1:
+        try:
+            src_path_i = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path+str(i))
+            src_path_ii = path.join(app.config['UPLOAD_FOLDER'], file_path, file_path+str(i-1))
+            if i == 0:
+                mv(src_path, dest_path)
+            elif i == 1:
+                mv(src_path, dest_path_i)
+                mv(dest_path_i, dest_path)
+            else:
+                mv(dest_path_ii, dest_path_i)
+                mv(dest_path_i, dest_path)
+            j = i
+            i = -1
+        except:
+            i += 1
+
+    # remove leftover files in tmp
+    remove(path.join(app.config['UPLOAD_FOLDER'], filename))
+    rmtree(path.join(app.config['UPLOAD_FOLDER'], file_path))
+    return j
 
 @app.route('/forms', methods=['POST'])
 def forms():
@@ -22,86 +52,9 @@ def forms():
         j = 0
         if filename:
             if filename.rsplit('.', 1)[1] == "zip":
-                # move to services folder
-                i = 0
-                j = 0
-                while i != -1:
-                    try:
-                        if i == 0:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         filename.rsplit('.', 1)[0]),
-                               app.config['SERVICES_FOLDER'])
-                        elif i == 1:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         filename.rsplit('.', 1)[0]),
-                               path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         (filename.rsplit('.', 1)[0])+str(i)))
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         (filename.rsplit('.', 1)[0])+str(i)),
-                               app.config['SERVICES_FOLDER'])
-                        else:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         (filename.rsplit('.', 1)[0])+str(i-1)),
-                               path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         (filename.rsplit('.', 1)[0])+str(i)))
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 1)[0],
-                                         (filename.rsplit('.', 1)[0])+str(i)),
-                               app.config['SERVICES_FOLDER'])
-                        j = i
-                        i = -1
-                    except:
-                        i += 1
-                # remove leftover files in tmp
-                remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-                rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 1)[0]))
-
+                j = move_services(filename, j, 1)
             elif filename.rsplit('.', 1)[1] == "gz":
-                # move to services folder
-                i = 0
-                j = 0
-                while i != -1:
-                    try:
-                        if i == 0:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         filename.rsplit('.', 2)[0]),
-                               app.config['SERVICES_FOLDER'])
-                        elif i == 1:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         filename.rsplit('.', 2)[0]),
-                               path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         (filename.rsplit('.', 2)[0])+str(i)))
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         (filename.rsplit('.', 2)[0])+str(i)),
-                               app.config['SERVICES_FOLDER'])
-                        else:
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         (filename.rsplit('.', 2)[0])+str(i-1)),
-                               path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         (filename.rsplit('.', 2)[0])+str(i)))
-                            mv(path.join(app.config['UPLOAD_FOLDER'],
-                                         filename.rsplit('.', 2)[0],
-                                         (filename.rsplit('.', 2)[0])+str(i)),
-                               app.config['SERVICES_FOLDER'])
-                        j = i
-                        i = -1
-                    except:
-                        i += 1
-                # remove leftover files in tmp
-                remove(path.join(app.config['UPLOAD_FOLDER'], filename))
-                rmtree(path.join(app.config['UPLOAD_FOLDER'], filename.rsplit('.', 2)[0]))
+                j = move_services(filename, j, 2)
 
             missing_files = request.json['missing_files']
             if "description" in missing_files:
