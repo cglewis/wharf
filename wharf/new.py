@@ -10,6 +10,26 @@ import json
 import redis
 import time
 
+def store_metadata(exposed_ports, c, r, container_id, service, container):
+    for exposed_port in exposed_ports:
+        container_port = c.port(container_id, exposed_port)
+        r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), container_id)
+        r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), "http://%s:%s" %(app.config['DOMAIN'], container_port))
+        # !! TODO more than one url when there is more than one exposed_port
+        url = "%s:%s" % (app.config['DOMAIN'], container_port)
+
+    today = time.time()
+    hmap = {}
+    hmap['service'] = service
+    hmap['timestamp'] = today
+    hmap['owned_by'] = current_user.email
+    hmap['container_id'] = container_id
+    hmap['container'] = container
+    hmap['url'] = url
+    r.hmset(url, hmap)
+    r.rpush(current_user.email, url)
+    return url
+
 @app.route('/new/<service>', methods=["POST"])
 def new(service):
     if current_user.is_authenticated():
@@ -43,22 +63,7 @@ def new(service):
             ports = b['NetworkSettings']['PortMapping']['Tcp']
             for key,value in ports.items():
                 exposed_ports.append(key)
-            for exposed_port in exposed_ports:
-                container_port = c.port(container_id, exposed_port)
-                r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), container_id)
-                r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), "http://%s:%s" %(app.config['DOMAIN'], container_port))
-                # !! TODO more than one url when there is more than one exposed_port
-                url = "%s:%s" % (app.config['DOMAIN'], container_port)
-            today = time.time()
-            hmap = {}
-            hmap['service'] = service
-            hmap['timestamp'] = today
-            hmap['owned_by'] = current_user.email
-            hmap['container_id'] = container_id
-            hmap['container'] = container
-            hmap['url'] = url
-            r.hmset(url, hmap)
-            r.rpush(current_user.email, url)
+            url = store_metadata(exposed_ports, c, r, container_id, service, container)
             return jsonify(url=url)
 
         with open(dockerfile, 'r') as content_file:
@@ -86,24 +91,7 @@ def new(service):
             container = c.create_container(image_id, ports=exposed_ports)
         container_id = container["Id"]
         c.start(container_id)
-        for exposed_port in exposed_ports:
-            container_port = c.port(container_id, exposed_port)
-            r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), container_id)
-            r.rpush("frontend:%s.%s" % (container_id, app.config['DOMAIN']), "http://%s:%s" %(app.config['DOMAIN'], container_port))
-            # !! TODO more than one url when there is more than one exposed_port
-            url = "%s:%s" % (app.config['DOMAIN'], container_port)
-
-        today = time.time()
-        hmap = {}
-        hmap['service'] = service
-        hmap['timestamp'] = today
-        hmap['owned_by'] = current_user.email
-        hmap['container_id'] = container_id
-        hmap['container'] = container
-        hmap['url'] = url
-        r.hmset(url, hmap)
-        r.rpush(current_user.email, url)
+        url = store_metadata(exposed_ports, c, r, container_id, service, container)
         return jsonify(url=url)
     else:
         return redirect("/")
-
