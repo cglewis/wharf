@@ -94,8 +94,8 @@ db.create_all()
 import wharf.details
 import wharf.favicon
 import wharf.forms
-import wharf.kill
 import wharf.index
+import wharf.kill
 import wharf.new
 import wharf.profile
 import wharf.robot
