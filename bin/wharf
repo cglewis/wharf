@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-c', '--config',
+                        help="interactive configuration",
+                        action="store_true")
+    parser.add_argument('-f', '--file',
+                        help="path to configuration file")
+    parser.add_argument('-t', '--test',
+                        help="does not actually start wharf, just tests the configuration",
+                        action="store_true")
+    parser.add_argument('-v', '--verbose',
+                        help="increase output verbosity",
+                        action="store_true")
+    parser.add_argument('start', help="start Wharf")
+    args = parser.parse_args()
+
+    if args.config:
+        print "interactive config"
+        # interactive configuration
+    else:
+        print "no interactive config"
+        # look for pre-existing configuration file
+    if args.file:
+        print args.file
+        # check that file exists
+    else:
+        print "use default file location"
+    if args.test:
+        print "don't run wharf"
+    else:
+        print "run wharf"
+    if args.verbose:
+        print "be verbose!"
+    else:
+        print "be quiet!"
+
+if __name__ == '__main__':
+    main() 
