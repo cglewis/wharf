@@ -61,6 +61,29 @@ def missing_metadata(j, filename, metadata):
     elif filename.rsplit('.', 1)[1] == "gz":
         add_metadata(meta, filename, j, 2)
 
+def missing_metadata2(j, url, services, metadata):
+    meta = ""
+    try:
+        meta = request.json['metadata']
+    except:
+        pass
+    if j == 0:
+        j = ""
+    # if url is docker index
+    if not "." in url or not "git" in url:
+        index_service = services[0].replace("/", "-")
+        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
+            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
+        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
+            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
+        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
+            f.write(meta)
+    elif url.rsplit('.', 1)[1] == "git":
+        if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
+            mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
+        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
+            f.write(meta)
+
 @app.route('/forms', methods=['POST'])
 def forms():
     try:
@@ -459,49 +482,9 @@ def forms():
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/client/"+clientFilename, 'w') as f:
                             f.write(client)
                 if "about" in missing_files:
-                    about = ""
-                    try:
-                        about = request.json['about']
-                    except:
-                        pass
-                    if j == 0:
-                        j = ""
-                    # if url is docker index
-                    if not "." in url or not "git" in url:
-                        index_service = services[0].replace("/", "-")
-                        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
-                            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
-                        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
-                            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                            f.write(about)
-                    elif url.rsplit('.', 1)[1] == "git":
-                        if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
-                            mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                            f.write(about)
+                    missing_metadata2(j, url, services, 'about')
                 if "body" in missing_files:
-                    body = ""
-                    try:
-                        body = request.json['body']
-                    except:
-                        pass
-                    if j == 0:
-                        j = ""
-                    # if url is docker index
-                    if not "." in url or not "git" in url:
-                        index_service = services[0].replace("/", "-")
-                        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
-                            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
-                        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
-                            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                            f.write(body)
-                    elif url.rsplit('.', 1)[1] == "git":
-                        if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
-                            mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-                        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                            f.write(body)
+                    missing_metadata2(j, url, services, 'body')
                 if "link" in missing_files:
                     link = "#"
                     linkName = "None"

@@ -38,6 +38,8 @@ def main():
         print "be verbose!"
     else:
         print "be quiet!"
+    if args.start:
+        print args.start
 
 if __name__ == '__main__':
     main() 
