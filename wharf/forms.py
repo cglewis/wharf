@@ -54,8 +54,6 @@ def missing_metadata(j, filename, metadata):
         meta = request.json[metadata]
     except:
         pass
-    if j == 0:
-        j = ""
     if filename.rsplit('.', 1)[1] == "zip":
         add_metadata(meta, filename, j, 1)
     elif filename.rsplit('.', 1)[1] == "gz":
@@ -67,21 +65,46 @@ def missing_metadata2(j, url, services, metadata):
         meta = request.json['metadata']
     except:
         pass
-    if j == 0:
-        j = ""
     # if url is docker index
     if not "." in url or not "git" in url:
         index_service = services[0].replace("/", "-")
-        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)):
-            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j))
-        if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html"):
-            mkdir(app.config['SERVICES_FOLDER']+index_service+str(j)+"/html")
-        with open(app.config['SERVICES_FOLDER']+index_service+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
+        meta_path = app.config['SERVICES_FOLDER']+index_service+str(j)
+        meta_path2 = app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)
+        meta_path3 = "/"+app.config['SERVICE_DICT'][metadata]
+        
+        if not path.exists(meta_path):
+            mkdir(meta_path)
+        if not path.exists(meta_path+"/html"):
+            mkdir(meta_path+"/html")
+        with open(meta_path+meta_path3, 'w') as f:
             f.write(meta)
     elif url.rsplit('.', 1)[1] == "git":
-        if not path.exists(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html"):
-            mkdir(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/html")
-        with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
+        if not path.exists(meta_path2+"/html"):
+            mkdir(meta_path2+"/html")
+        with open(meta_path2+metadata3, 'w') as f:
+            f.write(meta)
+
+def missing_metadata3(counter, j_array, url, service, metadata):
+    meta = ""
+    try:
+        meta = request.json[metadata+str(counter)]
+    except:
+        pass
+    # if url is docker index
+    if not "." in url or not "git" in url:
+        index_service = service.replace("/", "-")
+        meta_path = app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])
+        meta_path3 = "/"+app.config['SERVICE_DICT'][metadata]
+        if not path.exists(meta_path):
+            mkdir(meta_path)
+        if not path.exists(meta_path+"/html"):
+            mkdir(meta_path+"/html")
+        with open(meta_path+metadata3, 'w') as f:
+            f.write(meta)
+    elif url.rsplit('.', 1)[1] == "git":
+        if not path.exists(meta_path+"/html"):
+            mkdir(meta_path+"/html")
+        with open(meta_path+metadata3, 'w') as f:
             f.write(meta)
 
 @app.route('/forms', methods=['POST'])
@@ -99,14 +122,14 @@ def forms():
                 j = move_services(filename, j, 2)
 
             missing_files = request.json['missing_files']
+            if j == 0:
+                j = ""
             if "description" in missing_files:
                 description = ""
                 try:
                     description = request.json['description']
                 except:
                     pass
-                if j == 0:
-                    j = ""
                 if filename.rsplit('.', 1)[1] == "zip":
                     with open(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                         f.write(description)
@@ -123,8 +146,6 @@ def forms():
                     clientFilename = request.json['clientFilename']
                 except:
                     pass
-                if j == 0:
-                    j = ""
                 if filename.rsplit('.', 1)[1] == "zip":
                     meta_path = app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)
                     if not path.exists(meta_path+"/client"):
@@ -155,8 +176,6 @@ def forms():
                     linkName = request.json['linkName']
                 except:
                     pass
-                if j == 0:
-                    j = ""
                 if filename.rsplit('.', 1)[1] == "zip":
                     if not path.exists(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html"):
                         mkdir(app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)+"/html")
@@ -282,13 +301,13 @@ def forms():
                     # similarly with description, client, about, body, link, etc.
                     missing_files = request.json['missing_files']
                     description = ""
+                    if j_array[counter] == 0:
+                        j_array[counter] = ""
                     if "description" in missing_files:
                         try:
                             description = request.json['description'+str(counter)]
                         except:
                             pass
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
                         # if url is docker index
                         if not "." in url or not "git" in url:
                             if description == "":
@@ -302,8 +321,6 @@ def forms():
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                                 f.write(description)
                     else:
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
                         # if url is docker index
                         if not "." in url or not "git" in url:
                             if description == "":
@@ -324,8 +341,6 @@ def forms():
                             clientFilename = request.json['clientFilename'+str(counter)]
                         except:
                             pass
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
                         # if url is docker index
                         if not "." in url or not "git" in url:
                             index_service = service.replace("/", "-")
@@ -347,49 +362,9 @@ def forms():
                             with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/client/"+clientFilename, 'w') as f:
                                 f.write(client)
                     if "about" in missing_files:
-                        about = ""
-                        try:
-                            about = request.json['about'+str(counter)]
-                        except:
-                            pass
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
-                        # if url is docker index
-                        if not "." in url or not "git" in url:
-                            index_service = service.replace("/", "-")
-                            if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])):
-                                mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
-                            if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html"):
-                                mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                                f.write(about)
-                        elif url.rsplit('.', 1)[1] == "git":
-                            if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
-                                mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['about'], 'w') as f:
-                                f.write(about)
+                        missing_metadata3(counter, j_array, url, service, "about")
                     if "body" in missing_files:
-                        body = ""
-                        try:
-                            body = request.json['body'+str(counter)]
-                        except:
-                            pass
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
-                        # if url is docker index
-                        if not "." in url or not "git" in url:
-                            index_service = service.replace("/", "-")
-                            if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])):
-                                mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter]))
-                            if not path.exists(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html"):
-                                mkdir(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+index_service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                                f.write(body)
-                        elif url.rsplit('.', 1)[1] == "git":
-                            if not path.exists(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html"):
-                                mkdir(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/html")
-                            with open(app.config['SERVICES_FOLDER']+service+str(j_array[counter])+"/"+app.config['SERVICE_DICT']['body'], 'w') as f:
-                                f.write(body)
+                        missing_metadata3(counter, j_array, url, service, "body")
                     if "link" in missing_files:
                         link = "#"
                         linkName = "None"
@@ -398,8 +373,6 @@ def forms():
                             linkName = request.json['linkName'+str(counter)]
                         except:
                             pass
-                        if j_array[counter] == 0:
-                            j_array[counter] = ""
                         # if url is docker index
                         if not "." in url or not "git" in url:
                             index_service = service.replace("/", "-")
@@ -418,13 +391,13 @@ def forms():
             else:
                 missing_files = request.json['missing_files']
                 description = ""
+                if j == 0:
+                    j = ""
                 if "description" in missing_files:
                     try:
                         description = request.json['description']
                     except:
                         pass
-                    if j == 0:
-                        j = ""
                     # if url is docker index
                     if not "." in url or not "git" in url:
                         if description == "":
@@ -438,8 +411,6 @@ def forms():
                         with open(app.config['SERVICES_FOLDER']+(url.rsplit('/', 1)[1]).rsplit('.', 1)[0]+str(j)+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                             f.write(description)
                 else:
-                    if j == 0:
-                        j = ""
                     # if url is docker index
                     if not "." in url or not "git" in url:
                         if description == "":
@@ -459,8 +430,6 @@ def forms():
                         clientFilename = request.json['clientFilename']
                     except:
                         pass
-                    if j == 0:
-                        j = ""
                     # if url is docker index
                     if not "." in url or not "git" in url:
                         index_service = services[0].replace("/", "-")
@@ -493,8 +462,6 @@ def forms():
                         linkName = request.json['linkName']
                     except:
                         pass
-                    if j == 0:
-                        j = ""
                     # if url is docker index
                     if not "." in url or not "git" in url:
                         index_service = services[0].replace("/", "-")
