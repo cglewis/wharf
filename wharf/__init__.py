@@ -92,6 +92,7 @@ security = Security(app, user_datastore)
 db.create_all()
 
 import wharf.details
+import wharf.edit
 import wharf.favicon
 import wharf.forms
 import wharf.index

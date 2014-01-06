@@ -332,6 +332,6 @@ def index():
         description_path = "services/"+service+"/"+app.config['SERVICE_DICT']['description']
         with open(description_path, 'r') as content_file:
             description = content_file.read()
-        row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td></tr>'
+        row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td><td><a href="edit/'+service+'">Edit</a></td></tr>'
     row = Markup(row)
     return render_template("index.html",row=row)
