@@ -2,6 +2,8 @@
 
 import argparse
 
+from docker import client
+
 def main():
     parser = argparse.ArgumentParser()
 
