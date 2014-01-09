@@ -4,22 +4,12 @@ import argparse
 
 from docker import client
 
-def main():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('-c', '--config',
-                        help="interactive configuration",
-                        action="store_true")
-    parser.add_argument('-f', '--file',
-                        help="path to configuration file")
-    parser.add_argument('-t', '--test',
-                        help="does not actually start wharf, just tests the configuration",
-                        action="store_true")
-    parser.add_argument('-v', '--verbose',
-                        help="increase output verbosity",
-                        action="store_true")
-    parser.add_argument('start', help="start Wharf")
-    args = parser.parse_args()
+def start(args):
+    print args.action
+    # ensure redis is running
+    # store config in redis
+    # ensure docker is running
+    # check for wharf container, if exists kill and start a new one
 
     if args.config:
         print "interactive config"
@@ -40,8 +30,63 @@ def main():
         print "be verbose!"
     else:
         print "be quiet!"
-    if args.start:
-        print args.start
+
+    return
+
+def restart(args):
+    print args.action
+    # check for config
+    # ensure redis is running
+    # ensure docker is running
+    # check for wharf container, if exists kill and start a new one
+    if args.verbose:
+        print "be verbose!"
+    else:
+        print "be quiet!"
+    if args.test:
+        print "nothing to do in testing mode!"
+    return
+
+def stop(args):
+    print args.action
+    # stop redis
+    # stop docker
+    # kill wharf container
+    if args.verbose:
+        print "be verbose!"
+    else:
+        print "be quiet!"
+    if args.test:
+        print "nothing to do in testing mode!"
+    return
+
+def main():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-c', '--config',
+                        help="interactive configuration",
+                        action="store_true", default=False)
+    parser.add_argument('-f', '--file',
+                        help="path to configuration file", default='wharf.conf')
+    parser.add_argument('-t', '--test',
+                        help="does not actually start wharf, just tests the \
+                              configuration",
+                        action="store_true", default=False)
+    parser.add_argument('-v', '--verbose',
+                        help="increase output verbosity",
+                        action="store_true", default=False)
+    parser.add_argument('action', choices={'start', 'stop', 'restart'},
+                        help="starts/restart/stops required services for \
+                              wharf, default: start",
+                        nargs='?', default='start')
+    args = parser.parse_args()
+
+    if args.action == 'start':
+        start(args)
+    elif args.action == 'restart':
+        restart(args)
+    elif args.action == 'stop':
+        stop(args)
 
 if __name__ == '__main__':
     main() 
