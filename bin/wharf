@@ -63,34 +63,18 @@ def start(args):
                 print choice, "is not a valid port"
         while 1:
             choice=raw_input("Enter ip address of the Wharf host:["+str(WHARF_IP_ADDRESS)+"]")
-            if choice == "":
-                break
-            try:
-                # !! TODO
-                #    parse ip address
-                int(choice)
-                if int(choice) < 0 or int(choice) > 65535:
-                    print choice, "is not a valid ip address range"
-                else:
-                    WHARF_IP_ADDRESS = int(choice)
-                    break
-            except ValueError:
-                print choice, "is not a valid ip address"
+            # !! TODO
+            #    parse ip address 
+            if choice != "":
+                WHARF_IP_ADDRESS = choice
+            break
         while 1:
             choice=raw_input("Enter SMTP mail server:["+str(MAIL_SERVER)+"]")
-            if choice == "":
-                break
-            try:
-                # !! TODO
-                #    parse mail host 
-                int(choice)
-                if int(choice) < 0 or int(choice) > 65535:
-                    print choice, "is not a valid range"
-                else:
-                    MAIL_SERVER = int(choice)
-                    break
-            except ValueError:
-                print choice, "is not a valid port"
+            # !! TODO
+            #    parse mail host 
+            if choice != "":
+                MAIL_SERVER = choice
+            break
         while 1:
             choice=raw_input("Enter port for the mail server:["+str(MAIL_PORT)+"]")
             if choice == "":
@@ -164,6 +148,43 @@ def start(args):
                     break
             except ValueError:
                 print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Enter path for services:["+str(SERVICES_FOLDER)+"]")
+            # !! TODO verify a valid path
+            if choice != "":
+                SERVICES_FOLDER = choice
+            break
+        while 1:
+            choice=raw_input("Enter path for uploads:["+str(UPLOAD_FOLDER)+"]")
+            # !! TODO verify a valid path
+            if choice != "":
+                UPLOAD_FOLDER = choice
+            break
+        while 1:
+            choice=raw_input("Enter secret key:["+str(SECRET_KEY)+"]")
+            if choice != "":
+                SECRET_KEY = choice
+            break
+        while 1:
+            choice=raw_input("Enter password salt:["+str(SECURITY_PASSWORD_SALT)+"]")
+            if choice != "":
+                SECURITY_PASSWORD_SALT = choice
+            break
+        while 1:
+            choice=raw_input("Enter database URI:["+str(SQLALCHEMY_DATABASE_URI)+"]")
+            if choice != "":
+                SQLALCHEMY_DATABASE_URI = choice
+            break
+        while 1:
+            choice=raw_input("Enter mail sender:["+str(DEFAULT_MAIL_SENDER)+"]")
+            if choice != "":
+                DEFAULT_MAIL_SENDER = choice
+            break
+        while 1:
+            choice=raw_input("Enter unix docker path:["+str(UNIX_DOCKER_PATH)+"]")
+            if choice != "":
+                UNIX_DOCKER_PATH = choice
+            break
         print WHARF_CONTAINER_PORT
         print WHARF_HOST_PORT
         print WHARF_IP_ADDRESS
