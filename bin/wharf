@@ -14,6 +14,177 @@ def start(args):
     if args.config:
         print "interactive config"
         # interactive configuration
+        WHARF_CONTAINER_PORT = 80
+        WHARF_HOST_PORT = 80
+        WHARF_IP_ADDRESS = "0.0.0.0"
+        MAIL_SERVER = "smtp.gmail.com"
+        MAIL_PORT = 465
+        MAIL_USE_TLS = False
+        MAIL_USE_SSL = True
+        MAIL_USERNAME = "gmail_email_address"
+        MAIL_PASSWORD = "gmail_password"
+        DOCKER_PORT = 4243
+        REDIS_PORT = 6379
+        DOCKER_HOST = "localhost"
+        DOMAIN = "localhost"
+        REDIS_HOST = "localhost"
+        SERVICES_FOLDER = "/wharf/services/"
+        UPLOAD_FOLDER = "/wharf/tmp/"
+        SECRET_KEY = "EckNi2Fluincawd+"
+        SECURITY_PASSWORD_SALT = "S)1<P3_~$XF}DI=#"
+        SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/db.sqlite"
+        DEFAULT_MAIL_SENDER = "dockerwharf@gmail.com"
+        UNIX_DOCKER_PATH = "unix:///var/run/docker.sock"
+        while 1:
+            choice=raw_input("Enter port for the Wharf container:["+str(WHARF_CONTAINER_PORT)+"]")
+            if choice == "":
+                break
+            try:
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    WHARF_CONTAINER_PORT = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Enter port for the Wharf host:["+str(WHARF_HOST_PORT)+"]")
+            if choice == "":
+                break
+            try:
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    WHARF_HOST_PORT = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Enter ip address of the Wharf host:["+str(WHARF_IP_ADDRESS)+"]")
+            if choice == "":
+                break
+            try:
+                # !! TODO
+                #    parse ip address
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid ip address range"
+                else:
+                    WHARF_IP_ADDRESS = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid ip address"
+        while 1:
+            choice=raw_input("Enter SMTP mail server:["+str(MAIL_SERVER)+"]")
+            if choice == "":
+                break
+            try:
+                # !! TODO
+                #    parse mail host 
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    MAIL_SERVER = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Enter port for the mail server:["+str(MAIL_PORT)+"]")
+            if choice == "":
+                break
+            try:
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    MAIL_PORT = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Use TLS?:["+str(MAIL_USE_TLS)+"]")
+            if choice == "":
+                break
+            try:
+                if choice == "True" or choice == "False":
+                    MAIL_USE_TLS = bool(choice)
+                    break
+                else:
+                    print choice, "is not True or False"
+            except:
+                print choice, "is not True or False"
+        while 1:
+            choice=raw_input("Use SSL?:["+str(MAIL_USE_SSL)+"]")
+            if choice == "":
+                break
+            try:
+                if choice == "True" or choice == "False":
+                    MAIL_USE_SSL = bool(choice)
+                    break
+                else:
+                    print choice, "is not True or False"
+            except:
+                print choice, "is not True or False"
+        while 1:
+            choice=raw_input("Enter mail username:["+str(MAIL_USERNAME)+"]")
+            if choice != "":
+                MAIL_USERNAME = choice
+            break
+        while 1:
+            choice=raw_input("Enter mail password:["+str(MAIL_PASSWORD)+"]")
+            if choice != "":
+                MAIL_PASSWORD = choice
+            break
+        while 1:
+            choice=raw_input("Enter port for docker:["+str(DOCKER_PORT)+"]")
+            if choice == "":
+                break
+            try:
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    DOCKER_PORT = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        while 1:
+            choice=raw_input("Enter port for redis:["+str(REDIS_PORT)+"]")
+            if choice == "":
+                break
+            try:
+                int(choice)
+                if int(choice) < 0 or int(choice) > 65535:
+                    print choice, "is not a valid range"
+                else:
+                    REDIS_PORT = int(choice)
+                    break
+            except ValueError:
+                print choice, "is not a valid port"
+        print WHARF_CONTAINER_PORT
+        print WHARF_HOST_PORT
+        print WHARF_IP_ADDRESS
+        print MAIL_SERVER 
+        print MAIL_PORT
+        print MAIL_USE_TLS
+        print MAIL_USE_SSL
+        print MAIL_USERNAME
+        print MAIL_PASSWORD
+        print DOCKER_PORT
+        print REDIS_PORT
+        print DOCKER_HOST
+        print DOMAIN
+        print REDIS_HOST
+        print SERVICES_FOLDER
+        print UPLOAD_FOLDER
+        print SECRET_KEY
+        print SECURITY_PASSWORD_SALT
+        print SQLALCHEMY_DATABASE_URI
+        print DEFAULT_MAIL_SENDER
+        print UNIX_DOCKER_PATH
     else:
         print "no interactive config"
         # look for pre-existing configuration file
@@ -30,7 +201,6 @@ def start(args):
         print "be verbose!"
     else:
         print "be quiet!"
-
     return
 
 def restart(args):
