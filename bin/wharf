@@ -1,40 +1,41 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
 
 from docker import client
 
 def start(args):
-    print args.action
-    # ensure redis is running
-    # store config in redis
-    # ensure docker is running
-    # check for wharf container, if exists kill and start a new one
+    # !! TODO ensure redis is running
+    # !! TODO ensure docker is running
+    # !! TODO check for wharf container, if exists kill and start a new one
+
+    # defaults
+    WHARF_CONTAINER_PORT = 80
+    WHARF_HOST_PORT = 80
+    WHARF_IP_ADDRESS = "0.0.0.0"
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 465
+    MAIL_USE_TLS = False
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = "gmail_email_address"
+    MAIL_PASSWORD = "gmail_password"
+    DOCKER_PORT = 4243
+    REDIS_PORT = 6379
+    DOCKER_HOST = "localhost"
+    DOMAIN = "localhost"
+    REDIS_HOST = "localhost"
+    SERVICES_FOLDER = "/wharf/services/"
+    UPLOAD_FOLDER = "/wharf/tmp/"
+    SECRET_KEY = "EckNi2Fluincawd+"
+    SECURITY_PASSWORD_SALT = "S)1<P3_~$XF}DI=#"
+    SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/db.sqlite"
+    DEFAULT_MAIL_SENDER = "dockerwharf@gmail.com"
+    UNIX_DOCKER_PATH = "unix:///var/run/docker.sock"
 
     if args.config:
         print "interactive config"
         # interactive configuration
-        WHARF_CONTAINER_PORT = 80
-        WHARF_HOST_PORT = 80
-        WHARF_IP_ADDRESS = "0.0.0.0"
-        MAIL_SERVER = "smtp.gmail.com"
-        MAIL_PORT = 465
-        MAIL_USE_TLS = False
-        MAIL_USE_SSL = True
-        MAIL_USERNAME = "gmail_email_address"
-        MAIL_PASSWORD = "gmail_password"
-        DOCKER_PORT = 4243
-        REDIS_PORT = 6379
-        DOCKER_HOST = "localhost"
-        DOMAIN = "localhost"
-        REDIS_HOST = "localhost"
-        SERVICES_FOLDER = "/wharf/services/"
-        UPLOAD_FOLDER = "/wharf/tmp/"
-        SECRET_KEY = "EckNi2Fluincawd+"
-        SECURITY_PASSWORD_SALT = "S)1<P3_~$XF}DI=#"
-        SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/db.sqlite"
-        DEFAULT_MAIL_SENDER = "dockerwharf@gmail.com"
-        UNIX_DOCKER_PATH = "unix:///var/run/docker.sock"
         while 1:
             choice=raw_input("Enter port for the Wharf container:["+str(WHARF_CONTAINER_PORT)+"]")
             if choice == "":
@@ -185,35 +186,50 @@ def start(args):
             if choice != "":
                 UNIX_DOCKER_PATH = choice
             break
-        print WHARF_CONTAINER_PORT
-        print WHARF_HOST_PORT
-        print WHARF_IP_ADDRESS
-        print MAIL_SERVER 
-        print MAIL_PORT
-        print MAIL_USE_TLS
-        print MAIL_USE_SSL
-        print MAIL_USERNAME
-        print MAIL_PASSWORD
-        print DOCKER_PORT
-        print REDIS_PORT
-        print DOCKER_HOST
-        print DOMAIN
-        print REDIS_HOST
-        print SERVICES_FOLDER
-        print UPLOAD_FOLDER
-        print SECRET_KEY
-        print SECURITY_PASSWORD_SALT
-        print SQLALCHEMY_DATABASE_URI
-        print DEFAULT_MAIL_SENDER
-        print UNIX_DOCKER_PATH
     else:
         print "no interactive config"
         # look for pre-existing configuration file
-    if args.file:
-        print args.file
-        # check that file exists
-    else:
-        print "use default file location"
+        if args.file:
+            print args.file
+            # check that file exists
+        else:
+            print "use default file location"
+    
+    print WHARF_CONTAINER_PORT
+    print WHARF_HOST_PORT
+    print WHARF_IP_ADDRESS
+    print DOCKER_PORT
+    print REDIS_PORT
+    print DOCKER_HOST
+    print DOMAIN
+    print REDIS_HOST
+    print SERVICES_FOLDER
+    print UPLOAD_FOLDER
+    print SECRET_KEY
+    print SECURITY_PASSWORD_SALT
+    print SQLALCHEMY_DATABASE_URI
+    print DEFAULT_MAIL_SENDER
+    print UNIX_DOCKER_PATH
+
+    print "writing configuration settings..."
+
+    # !! TODO determine wharf root directory
+
+    # write out mail settings
+    try:
+        with open('wharf/email_config/email.py', 'w') as f:
+            f.write("MAIL_SERVER = '"+str(MAIL_SERVER)+"'\n")
+            f.write("MAIL_PORT = "+str(MAIL_PORT)+"\n")
+            f.write("MAIL_USE_TLS = "+str(MAIL_USE_TLS)+"\n")
+            f.write("MAIL_USE_SSL = "+str(MAIL_USE_SSL)+"\n")
+            f.write("MAIL_USERNAME = '"+str(MAIL_USERNAME)+"'\n")
+            f.write("MAIL_PASSWORD = '"+str(MAIL_PASSWORD)+"'\n")
+    except:
+        # !! TODO make this location more robust
+        print "unable to write to 'wharf/email_config/email.py',"
+        print "perhaps the directory is in the wrong location?"
+        sys.exit()
+
     if args.test:
         print "don't run wharf"
     else:
@@ -222,6 +238,12 @@ def start(args):
         print "be verbose!"
     else:
         print "be quiet!"
+
+    print "starting docker..."
+    print "starting hipache..."
+    print "starting redis..."
+    print "starting wharf..."
+    print "all services up, browse to http://"+str(DOCKER_HOST)+":"+str(WHARF_HOST_PORT)
     return
 
 def restart(args):
