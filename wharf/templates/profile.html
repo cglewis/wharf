@@ -35,7 +35,7 @@
                     {% endif %}
                 </ul>
                 {% if current_user.is_authenticated() %}
-                    <h4 class="muted">Logged in as {{ current_user.email }}</h4>
+                    <h4 class="muted">Logged in as {{ current_user.username }}</h4>
                 {% else %}
                     <h4 class="muted">Logged in as Anonymous</h4>
                 {% endif %}

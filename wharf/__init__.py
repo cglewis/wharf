@@ -10,13 +10,19 @@ from flask.ext.security import Security
 from flask.ext.security import SQLAlchemyUserDatastore
 from flask.ext.security import UserMixin
 from flask.ext.security import RoleMixin
+from flask_security.forms import ConfirmRegisterForm
+from wtforms import TextField, validators
 
 # set defaults
-
+DEFAULT_MAIL_SENDER = 'dockerwharf@gmail.com'
 DOCKER_HOST="localhost"
 DOMAIN = "localhost"
 REDIS_HOST = "localhost"
 REDIS_PORT = 6379
+# this should be re-generated for production use
+SECRET_KEY = 'EckNi2Fluincawd+'
+# this should be re-generated for production use
+SECURITY_PASSWORD_SALT = 'S)1<P3_~$XF}DI=#'
 SERVICES_FOLDER = '/home/vagrant/wharf/services/'
 SERVICE_DICT = {'description':'description.txt',
                 'client':'client/client.txt',
@@ -24,21 +30,20 @@ SERVICE_DICT = {'description':'description.txt',
                 'body':'html/body.html',
                 'link':'html/link.html',
                 'dockerfile':'docker/Dockerfile'}
+SQLALCHEMY_DATABASE_URI = 'sqlite:////tmp/db.sqlite'
 UPLOAD_FOLDER = '/home/vagrant/wharf/tmp/'
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-# this should be re-generated for production use
-app.config['SECRET_KEY'] = 'EckNi2Fluincawd+'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/db.sqlite'
-app.config['DEFAULT_MAIL_SENDER'] = 'dockerwharf@gmail.com'
+app.config['SECRET_KEY'] = SECRET_KEY 
+app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI 
+app.config['DEFAULT_MAIL_SENDER'] = DEFAULT_MAIL_SENDER 
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_CONFIRMABLE'] = True
 app.config['SECURITY_CHANGEABLE'] = True
 app.config['SECURITY_RECOVERABLE'] = True
 app.config['SECURITY_PASSWORD_HASH'] = 'sha512_crypt'
-# this should be re-generated for production use
-app.config['SECURITY_PASSWORD_SALT'] = 'S)1<P3_~$XF}DI=#'
+app.config['SECURITY_PASSWORD_SALT'] = SECURITY_PASSWORD_SALT 
 app.config['SECURITY_POST_REGISTER_VIEW'] = '/login'
 app.config['DOCKER_HOST'] = DOCKER_HOST
 app.config['DOMAIN'] = DOMAIN
@@ -68,6 +73,9 @@ roles_users = db.Table('roles_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
+class ExtendedRegisterForm(ConfirmRegisterForm):
+    username = TextField('Username', [validators.Required()])
+
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -76,6 +84,7 @@ class Role(db.Model, RoleMixin):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
+    username = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
@@ -83,11 +92,12 @@ class User(db.Model, UserMixin):
                             backref=db.backref('users', lazy='dynamic'))
 
     def __str__(self):
-        return '<User id=%s email=%s>' % (self.id, self.email)
+        return '<User id=%s email=%s username=%s>' % (self.id, self.email, self.username)
 
 # Setup Flask-Security
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-security = Security(app, user_datastore)
+security = Security(app, user_datastore, 
+                    confirm_register_form=ExtendedRegisterForm)
 
 db.create_all()
 

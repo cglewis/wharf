@@ -8,4 +8,5 @@ flask-babel
 flask-mail
 flask-sqlalchemy
 flask-security
+flask-wtf
 sh
