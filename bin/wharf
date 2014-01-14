@@ -2,10 +2,11 @@
 
 import argparse
 import fileinput
+import getpass
 import sys
 
 from docker import client
-
+from subprocess import check_output
 
 def replace_line(file,search,replace):
     for line in fileinput.input(file, inplace=1):
@@ -13,7 +14,35 @@ def replace_line(file,search,replace):
             line = replace+"\n"
         sys.stdout.write(line)
 
+def check_process(process):
+    print process,"is already running..."
+    restart_process = 1
+    while 1:
+        choice=raw_input("Would you like to restart "+process+"? [Y]")
+        if choice == "":
+            break
+        try:
+            if choice in ["Y", "y", "Yes", "yes", "YES"]:
+                break
+            elif choice in ["N", "n", "No", "no", "NO"]:
+                restart_process = 0 
+                break
+            else:
+                print choice, "is not Yes or No"
+        except:
+            print choice, "is not Yes or No"
+    return restart_process
+
 def start(args):
+    redis_running = check_output("ps -A | grep redis | wc -l", shell=True)
+    docker_running = check_output("ps -A | grep docker | wc -l", shell=True)
+    redis_running = (redis_running.split())[0]
+    docker_running = (docker_running.split())[0]
+    if redis_running:
+        restart_redis = check_process("redis-server")
+    if docker_running:
+        restart_docker = check_process("docker")
+
     # !! TODO ensure redis is running
     # !! TODO ensure docker is running
     # !! TODO check for wharf container, if exists kill
@@ -128,7 +157,7 @@ def start(args):
                 MAIL_USERNAME = choice
             break
         while 1:
-            choice=raw_input("Enter mail password:["+str(MAIL_PASSWORD)+"]")
+            choice=getpass.getpass("Enter mail password:["+str(MAIL_PASSWORD)+"]")
             if choice != "":
                 MAIL_PASSWORD = choice
             break
@@ -171,12 +200,12 @@ def start(args):
                 UPLOAD_FOLDER = choice
             break
         while 1:
-            choice=raw_input("Enter secret key:["+str(SECRET_KEY)+"]")
+            choice=getpass.getpass("Enter secret key:["+str(SECRET_KEY)+"]")
             if choice != "":
                 SECRET_KEY = choice
             break
         while 1:
-            choice=raw_input("Enter password salt:["+str(SECURITY_PASSWORD_SALT)+"]")
+            choice=getpass.getpass("Enter password salt:["+str(SECURITY_PASSWORD_SALT)+"]")
             if choice != "":
                 SECURITY_PASSWORD_SALT = choice
             break
@@ -204,22 +233,6 @@ def start(args):
         else:
             print "use default file location"
     
-    print WHARF_CONTAINER_PORT
-    print WHARF_HOST_PORT
-    print WHARF_IP_ADDRESS
-    print DOCKER_PORT
-    print REDIS_PORT
-    print DOCKER_HOST
-    print DOMAIN
-    print REDIS_HOST
-    print SERVICES_FOLDER
-    print UPLOAD_FOLDER
-    print SECRET_KEY
-    print SECURITY_PASSWORD_SALT
-    print SQLALCHEMY_DATABASE_URI
-    print DEFAULT_MAIL_SENDER
-    print UNIX_DOCKER_PATH
-
     print "writing configuration settings..."
 
     # !! TODO determine wharf root directory
@@ -278,17 +291,8 @@ def start(args):
     return
 
 def restart(args):
-    print args.action
-    # check for config
-    # ensure redis is running
-    # ensure docker is running
-    # check for wharf container, if exists kill and start a new one
-    if args.verbose:
-        print "be verbose!"
-    else:
-        print "be quiet!"
-    if args.test:
-        print "nothing to do in testing mode!"
+    stop(args)
+    start(args)
     return
 
 def stop(args):
