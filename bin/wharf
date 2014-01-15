@@ -34,14 +34,6 @@ def check_process(process):
     return restart_process
 
 def start(args):
-    redis_running = check_output("ps -A | grep redis | wc -l", shell=True)
-    docker_running = check_output("ps -A | grep docker | wc -l", shell=True)
-    redis_running = (redis_running.split())[0]
-    docker_running = (docker_running.split())[0]
-    if redis_running:
-        restart_redis = check_process("redis-server")
-    if docker_running:
-        restart_docker = check_process("docker")
 
     # !! TODO ensure redis is running
     # !! TODO ensure docker is running
@@ -60,6 +52,7 @@ def start(args):
     MAIL_PASSWORD = "gmail_password"
     DOCKER_PORT = 4243
     REDIS_PORT = 6379
+    REDIS_BIND_ADDRESS = "127.0.0.1"
     DOCKER_HOST = "localhost"
     DOMAIN = "localhost"
     REDIS_HOST = "localhost"
@@ -188,6 +181,13 @@ def start(args):
             except ValueError:
                 print choice, "is not a valid port"
         while 1:
+            choice=raw_input("Enter bind address for redis server:["+str(REDIS_BIND_ADDRESS)+"]")
+            # !! TODO
+            #    parse ip address 
+            if choice != "":
+                REDIS_BIND_ADDRESS = choice
+            break
+        while 1:
             choice=raw_input("Enter path for services:["+str(SERVICES_FOLDER)+"]")
             # !! TODO verify a valid path
             if choice != "":
@@ -275,6 +275,12 @@ def start(args):
     replace_line("Dockerfile", "EXPOSE ",
                  "EXPOSE "+str(WHARF_CONTAINER_PORT))
 
+    # !! TODO requires sudo
+    replace_line("/etc/redis/redis.conf", "port ",
+                 "port "+str(REDIS_PORT))
+    replace_line("/etc/redis/redis.conf", "bind ",
+                 "bind "+str(REDIS_BIND_ADDRESS))
+
     if args.test:
         print "don't run wharf"
     else:
@@ -284,6 +290,16 @@ def start(args):
     else:
         print "be quiet!"
 
+    redis_running = check_output("ps -A | grep redis | wc -l", shell=True)
+    docker_running = check_output("ps -A | grep docker | wc -l", shell=True)
+    redis_running = (redis_running.split())[0]
+    docker_running = (docker_running.split())[0]
+    if redis_running:
+        restart_redis = check_process("redis-server")
+        if restart_redis:
+            running = check_output("service redis-server restart", shell=True) 
+    if docker_running:
+        restart_docker = check_process("docker")
     print "starting docker..."
     print "starting redis..."
     print "starting wharf..."
