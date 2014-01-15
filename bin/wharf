@@ -3,6 +3,7 @@
 import argparse
 import fileinput
 import getpass
+import os
 import sys
 
 from docker import client
@@ -53,6 +54,7 @@ def start(args):
     DOCKER_PORT = 4243
     REDIS_PORT = 6379
     REDIS_BIND_ADDRESS = "127.0.0.1"
+    DOCKER_BIND_ADDRESS = "0.0.0.0"
     DOCKER_HOST = "localhost"
     DOMAIN = "localhost"
     REDIS_HOST = "localhost"
@@ -188,6 +190,21 @@ def start(args):
                 REDIS_BIND_ADDRESS = choice
             break
         while 1:
+            choice=raw_input("Enter docker hostname:["+str(DOCKER_HOST)+"]")
+            if choice != "":
+                DOCKER_HOST = choice
+            break
+        while 1:
+            choice=raw_input("Enter domain:["+str(DOMAIN)+"]")
+            if choice != "":
+                DOMAIN = choice
+            break
+        while 1:
+            choice=raw_input("Enter redis hostname:["+str(REDIS_HOST)+"]")
+            if choice != "":
+                REDIS_HOST = choice
+            break
+        while 1:
             choice=raw_input("Enter path for services:["+str(SERVICES_FOLDER)+"]")
             # !! TODO verify a valid path
             if choice != "":
@@ -294,12 +311,38 @@ def start(args):
     docker_running = check_output("ps -A | grep docker | wc -l", shell=True)
     redis_running = (redis_running.split())[0]
     docker_running = (docker_running.split())[0]
-    if redis_running:
+    if int(redis_running):
         restart_redis = check_process("redis-server")
         if restart_redis:
             running = check_output("service redis-server restart", shell=True) 
-    if docker_running:
+    else:
+        running = check_output("service redis-server restart", shell=True) 
+    cmd = "docker -H=tcp://"+DOCKER_BIND_ADDRESS+":"+str(DOCKER_PORT)+" -H="+UNIX_DOCKER_PATH+" -d &"
+    if int(docker_running):
         restart_docker = check_process("docker")
+        if restart_docker:
+            # stop docker
+            try:
+                os.system("service docker stop")
+                pid = check_output("ps -A | grep docker | awk '{ print $1 }'", shell=True)
+                os.system(("kill -9 "+str(pid))
+            except:
+                print 
+
+            # start docker
+            os.system(cmd) 
+    else:
+        # stop docker
+        try:
+            os.system("service docker stop")
+            pid = check_output("ps -A | grep docker | awk '{ print $1 }'", shell=True)
+            os.system("kill -9 "+str(pid))
+        except:
+            print
+
+        # start docker
+        os.system(cmd) 
+
     print "starting docker..."
     print "starting redis..."
     print "starting wharf..."
