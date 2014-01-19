@@ -36,8 +36,6 @@ def check_process(process):
 
 def start(args):
 
-    # !! TODO ensure redis is running
-    # !! TODO ensure docker is running
     # !! TODO check for wharf container, if exists kill
     # !! TODO build new wharf container, tag it, and start it
 
@@ -356,8 +354,6 @@ def restart(args):
 
 def stop(args):
     print args.action
-    # stop redis
-    # stop docker
     # kill wharf container
     if args.verbose:
         print "be verbose!"
