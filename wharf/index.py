@@ -315,7 +315,6 @@ def index():
                                                filename=file,
                                                indexDesc=desc,
                                                url=url)
-                        print url
             except:
                 print "Bad URL"
         else:
