@@ -4,6 +4,7 @@ import argparse
 import fileinput
 import getpass
 import os
+import re
 import sys
 
 from docker import client
@@ -95,11 +96,12 @@ def start(args):
                 print choice, "is not a valid port"
         while 1:
             choice=raw_input("Enter ip address of the Wharf host:["+str(WHARF_IP_ADDRESS)+"]")
-            # !! TODO
-            #    parse ip address 
-            if choice != "":
+            choice = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})',choice)
+            if choice:
                 WHARF_IP_ADDRESS = choice
-            break
+                break
+            else:
+                print choice, "is not a valid ip address"
         while 1:
             choice=raw_input("Enter SMTP mail server:["+str(MAIL_SERVER)+"]")
             # !! TODO
@@ -182,11 +184,12 @@ def start(args):
                 print choice, "is not a valid port"
         while 1:
             choice=raw_input("Enter bind address for redis server:["+str(REDIS_BIND_ADDRESS)+"]")
-            # !! TODO
-            #    parse ip address 
+            choice = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})',choice)
             if choice != "":
                 REDIS_BIND_ADDRESS = choice
-            break
+                break
+            else:
+                print choice, "is not a valid ip address"
         while 1:
             choice=raw_input("Enter docker hostname:["+str(DOCKER_HOST)+"]")
             if choice != "":
