@@ -135,27 +135,28 @@ def index():
         elif url != "":
             try:
                 if url:
+                    url_path = (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]
                     # !! TODO try/except
                     if url.rsplit('.', 1)[1] == "git":
                         # !! TODO try/except - if the folder already exists
                         git.clone(url, path.join(app.config['UPLOAD_FOLDER'],
-                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                                                 url_path))
 
                         # check for dockerfile at root
                         # check for dockerfile assuming repo is the services folder
                         if path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                 url_path,
                                                  "Dockerfile")) or path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                 (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                 url_path,
                                                  app.config['SERVICE_DICT']['dockerfile'])):
                             # check for existence of necessary files
                             missing_files = {}
                             for key,value in app.config['SERVICE_DICT'].items():
                                 if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              value)):
                                     missing_files[key] = value
-                            services.append((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])
+                            services.append(url_path)
                             if "dockerfile" in missing_files:
                                 del missing_files['dockerfile']
                             if missing_files:
@@ -171,23 +172,23 @@ def index():
                                 try:
                                     if i == 0:
                                         mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                                     url_path),
                                            app.config['SERVICES_FOLDER'])
                                     elif i == 1:
                                         mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]),
+                                                     url_path),
                                            path.join(app.config['UPLOAD_FOLDER'],
-                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                                     url_path+str(i)))
                                         mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                                     url_path+str(i)),
                                            app.config['SERVICES_FOLDER'])
                                     else:
                                         mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i-1)),
+                                                     url_path+str(i-1)),
                                            path.join(app.config['UPLOAD_FOLDER'],
-                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)))
+                                                     url_path+str(i)))
                                         mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                     ((url.rsplit('/', 1)[1]).rsplit('.', 1)[0])+str(i)),
+                                                     url_path+str(i)),
                                            app.config['SERVICES_FOLDER'])
                                     i = -1
                                 except:
@@ -195,14 +196,14 @@ def index():
                             try:
                                 # remove leftover files in tmp
                                 rmdir(path.join(app.config['UPLOAD_FOLDER'],
-                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                                                url_path))
                             except:
                                 pass
                         else:
                             i = 0
                             repo_dirs = []
                             for root, dirs, files in walk(path.join(app.config['UPLOAD_FOLDER'],
-                                                                    (url.rsplit('/', 1)[1]).rsplit('.', 1)[0])):
+                                                                    url_path)):
                                 if i == 0:
                                     repo_dirs = dirs
                                 i += 1
@@ -214,15 +215,15 @@ def index():
                                 # check for dockerfile in regular services folder
                                 # could be more than one
                                 if path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                         (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                         url_path,
                                                          service_dir, "Dockerfile")) or path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                           (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                           url_path,
                                                            service_dir, app.config['SERVICE_DICT']['dockerfile'])):
                                     # check for existence of necessary files
                                     missing_files = {}
                                     for key,value in app.config['SERVICE_DICT'].items():
                                         if not path.exists(path.join(app.config['UPLOAD_FOLDER'],
-                                                                     (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                                     url_path,
                                                                      service_dir,
                                                                      value)):
                                             missing_files[key] = value
@@ -245,29 +246,29 @@ def index():
                                         try:
                                             if i == 0:
                                                 mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir),
                                                    app.config['SERVICES_FOLDER'])
                                             elif i == 1:
                                                 mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir),
                                                    path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir+str(i)))
                                                 mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir+str(i)),
                                                    app.config['SERVICES_FOLDER'])
                                             else:
                                                 mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir+str(i-1)),
                                                    path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir+str(i)))
                                                 mv(path.join(app.config['UPLOAD_FOLDER'],
-                                                             (url.rsplit('/', 1)[1]).rsplit('.', 1)[0],
+                                                             url_path,
                                                              service_dir+str(i)),
                                                    app.config['SERVICES_FOLDER'])
                                             i = -1
@@ -275,7 +276,7 @@ def index():
                                             i += 1
                             try:
                                 rmdir(path.join(app.config['UPLOAD_FOLDER'],
-                                                (url.rsplit('/', 1)[1]).rsplit('.', 1)[0]))
+                                                url_path))
                             except:
                                 pass
                     else:
@@ -327,10 +328,14 @@ def index():
         last_modified = ""
         last_modified = time.ctime(path.getmtime("services/"+service))
         description = ""
-        # !! TODO try/except
-        description_path = "services/"+service+"/"+app.config['SERVICE_DICT']['description']
-        with open(description_path, 'r') as content_file:
-            description = content_file.read()
-        row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'+description+'</td><td><a href="saas/'+service+'">'+last_modified+'</a></td><td><a href="edit/'+service+'">Edit</a></td></tr>'
+        row += '<tr><td class="rowlink-skip"><a href="saas/'+service+'">'+service+'</a></td><td>'
+        try:
+            description_path = "services/"+service+"/"+app.config['SERVICE_DICT']['description']
+            with open(description_path, 'r') as content_file:
+                description = content_file.read()
+            row += description
+        except:
+            row += "no description"
+        row += '</td><td><a href="saas/'+service+'">'+last_modified+'</a></td><td><a href="edit/'+service+'">Edit</a></td></tr>'
     row = Markup(row)
     return render_template("index.html",row=row)
