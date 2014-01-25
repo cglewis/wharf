@@ -143,26 +143,28 @@ def forms():
         i = 0
         j = 0
         if filename:
-            if filename.rsplit('.', 1)[1] == "zip":
+            file_ext1 = filename.rsplit('.', 1)[1]
+            file_ext2 = filename.rsplit('.', 2)[1]
+            if file_ext1 == "zip":
                 j = move_services(filename, j, 1)
-            elif filename.rsplit('.', 1)[1] == "gz":
+            elif file_ext1 == "gz":
                 j = move_services(filename, j, 2)
 
             missing_files = request.json['missing_files']
             if j == 0:
                 j = ""
-            service_path = app.config['SERVICES_FOLDER']+filename.rsplit('.', 1)[0]+str(j)
-            service_path2 = app.config['SERVICES_FOLDER']+filename.rsplit('.', 2)[0]+str(j)
+            service_path = app.config['SERVICES_FOLDER']+file_ext1+str(j)
+            service_path2 = app.config['SERVICES_FOLDER']+file_ext2+str(j)
             if "description" in missing_files:
                 description = ""
                 try:
                     description = request.json['description']
                 except:
                     pass
-                if filename.rsplit('.', 1)[1] == "zip":
+                if file_ext1 == "zip":
                     with open(service_path+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                         f.write(description)
-                elif filename.rsplit('.', 1)[1] == "gz":
+                elif file_ext1 == "gz":
                     with open(service_path2+"/"+app.config['SERVICE_DICT']['description'], 'w') as f:
                         f.write(description)
             if "client" in missing_files:
@@ -175,7 +177,7 @@ def forms():
                     clientFilename = request.json['clientFilename']
                 except:
                     pass
-                if filename.rsplit('.', 1)[1] == "zip":
+                if file_ext1 == "zip":
                     if not path.exists(service_path+"/client"):
                         mkdir(service_path+"/client")
                     with open(service_path+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
@@ -183,7 +185,7 @@ def forms():
                         f.write(clientFilename)
                     with open(service_path+"/client/"+clientFilename, 'w') as f:
                         f.write(client)
-                elif filename.rsplit('.', 1)[1] == "gz":
+                elif file_ext1 == "gz":
                     if not path.exists(service_path2+"/client"):
                         mkdir(service_path2+"/client")
                     with open(service_path2+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
@@ -203,12 +205,12 @@ def forms():
                     linkName = request.json['linkName']
                 except:
                     pass
-                if filename.rsplit('.', 1)[1] == "zip":
+                if file_ext1 == "zip":
                     if not path.exists(service_path+"/html"):
                         mkdir(service_path+"/html")
                     with open(service_path+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
                         f.write(link+" "+linkName)
-                elif filename.rsplit('.', 1)[1] == "gz":
+                elif file_ext1 == "gz":
                     if not path.exists(service_path2+"/html"):
                         mkdir(service_path2+"/html")
                     with open(service_path2+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
