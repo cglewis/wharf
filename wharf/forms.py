@@ -294,7 +294,6 @@ def forms():
             except:
                 pass
             if len(services) > 1:
-                print services
                 counter = 0
                 for service in services:
                     # update missing_files for array of them,
@@ -319,14 +318,7 @@ def forms():
                         if not "." in url or not "git" in url:
                             if not path.exists(meta_path):
                                 mkdir(meta_path)
-                            if not path.exists(meta_path+"/client"):
-                                mkdir(meta_path+"/client")
-                            with open(meta_path+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
-                                f.write(clientLanguage+"\n")
-                                f.write(clientFilename)
-                            with open(meta_path+"/client/"+clientFilename, 'w') as f:
-                                f.write(client)
-                        elif url.rsplit('.', 1)[1] == "git":
+                        if not "." in url or not "git" in url or url.rsplit('.', 1)[1] == "git":
                             if not path.exists(meta_path+"/client"):
                                 mkdir(meta_path+"/client")
                             with open(meta_path+"/"+app.config['SERVICE_DICT']['client'], 'w') as f:
@@ -350,11 +342,7 @@ def forms():
                         if not "." in url or not "git" in url:
                             if not path.exists(meta_path):
                                 mkdir(meta_path)
-                            if not path.exists(meta_path+"/html"):
-                                mkdir(meta_path+"/html")
-                            with open(meta_path+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
-                                f.write(link+" "+linkName)
-                        elif url.rsplit('.', 1)[1] == "git":
+                        if not "." in url or not "git" in url or url.rsplit('.', 1)[1] == "git":
                             if not path.exists(meta_path+"/html"):
                                 mkdir(meta_path+"/html")
                             with open(meta_path+"/"+app.config['SERVICE_DICT']['link'], 'w') as f:
