@@ -79,7 +79,7 @@ def new(service):
             image_id = "JUNK"
             with open(image_id_path, 'r') as content_file:
                 image_id = content_file.read()
-            container = c.create_container(image_id, ports=exposed_ports)
+            container = c.create_container(image_id)
         except:
             # !! TODO try/except
             image_id, response = c.build(path=docker_path, tag=service)
@@ -87,9 +87,9 @@ def new(service):
             print image_id, response
             with open(image_id_path, 'w') as content_file:
                 content_file.write(image_id)
-            container = c.create_container(image_id, ports=exposed_ports)
+            container = c.create_container(image_id)
         container_id = container["Id"]
-        c.start(container_id)
+        c.start(container, publish_all_ports=True)
         url = store_metadata(exposed_ports, c, r, container_id, service, container)
         return jsonify(url=url)
     else:

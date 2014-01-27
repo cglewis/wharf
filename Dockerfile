@@ -17,6 +17,7 @@ RUN easy_install pip
 ADD . /wharf
 RUN pip install -r /wharf/requirements.txt
 ADD patch/auth.py /usr/local/lib/python2.7/dist-packages/docker/auth/auth.py
+ADD patch/client.py /usr/local/lib/python2.7/dist-packages/docker/client.py
 
 EXPOSE 5000
 
