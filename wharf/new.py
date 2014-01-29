@@ -58,7 +58,7 @@ def new(service):
             c.pull(service)
             container = c.create_container(service)
             container_id = container["Id"]
-            c.start(container)
+            c.start(container, publish_all_ports=True)
             b = c.inspect_container(container)
             ports = b['NetworkSettings']['PortMapping']['Tcp']
             for key,value in ports.items():
