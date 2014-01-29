@@ -23,7 +23,7 @@ def profile():
         for container in r.lrange(current_user.email, 0, -1):
             print "foo:",container
             container_dict = r.hgetall(container)
-            row += '<tr><td class="rowlink-skip"><a href="http://'+container+'">'+container+'</a></td><td>'+container_dict['service']+'</td><td>'+container_dict['container_id']+'</td><td>'+container_dict['owned_by']+'</td><td>'+humanize.naturaltime(datetime.timedelta(0, time.time()-float(container_dict['timestamp'])))+'</td><td><a href="/kill/'+container_dict['container_id']+'/'+container_dict['url']+'">Click to Terminate</a></td></tr>'
+            row += '<tr><td class="rowlink-skip"><a href="http://'+container+'">'+container+'</a></td><td>'+container_dict['service']+'</td><td>'+container_dict['container_id'][:8]+'</td><td>'+container_dict['owned_by']+'</td><td>'+humanize.naturaltime(datetime.timedelta(0, time.time()-float(container_dict['timestamp'])))+'</td><td><a href="/kill/'+container_dict['container_id']+'/'+container_dict['url']+'">Click to Terminate</a></td></tr>'
         row = Markup(row)
 
         return render_template("profile.html", row=row)

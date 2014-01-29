@@ -58,14 +58,25 @@
                     </div>
                   </form>
                 </div>
-                <table class="table table-striped table-bordered table-hover table-list-search">
-                  <thead>
-                    <tr><th>URL</th><th>Service</th><th>Id</th><th>Owned By</th><th>Running since</th><th>Delete</th></tr>
-                  </thead>
-                  <tbody data-link="row" class="rowlink">
-                    {{ row }}
-                  </tbody>
-                </table>
+                <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+                  <br /><br /><br />
+                  <li class="active"><a href="#services" data-toggle="tab">Services</a></li>
+                  <li><a href="#images" data-toggle="tab">Images</a></li>
+                </ul>
+                <div id="my-tab-content" class="tab-content">
+                  <div class="tab-pane active" id="services">
+                    <table class="table table-striped table-bordered table-hover table-list-search">
+                      <thead>
+                        <tr><th>URL</th><th>Service</th><th>Id</th><th>Owned By</th><th>Running since</th><th>Delete</th></tr>
+                      </thead>
+                      <tbody data-link="row" class="rowlink">
+                        {{ row }}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="tab-pane" id="images">
+                  </div>
+                </div>
             </div>
 
             <hr>
@@ -141,6 +152,10 @@
 
   ga('create', 'UA-564818-10', 'dockerwharf.com');
   ga('send', 'pageview');
+
+  jQuery(document).ready(function ($) {
+        $('#tabs').tab();
+  });
 
 </script>
 </html>
