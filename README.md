@@ -161,6 +161,3 @@ i.e.
 ```
 
 Special thanks to [@kfoss](http://github.com/kfoss) for contributing the artwork for Wharf!
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/cglewis/wharf/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-
