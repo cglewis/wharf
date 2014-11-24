@@ -5,7 +5,7 @@
 
 Wharf is an open-source Software-as-a-Service platform built with the power of Docker to enable any Dockerfile and some basic metadata to become an on-demand service in the cloud.
 
-[Demo of Wharf Running](http://dockerwharf.com)
+[Demo of Wharf Running](http://dockerwharf.com) (currently not in a working state, wharf needs to be updated to work with the latest docker, last confirmed build was in 0.6.4.
 
 Adding a Service
 ================
