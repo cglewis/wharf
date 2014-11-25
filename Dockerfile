@@ -6,10 +6,6 @@ RUN sed 's/main$/main universe/' -i /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get upgrade -y
 
-# Keep upstart from complaining
-RUN dpkg-divert --local --rename --add /sbin/initctl
-RUN ln -s /bin/true /sbin/initctl
-
 RUN apt-get install -y git
 RUN apt-get install -y python-setuptools
 RUN apt-get install -y redis-server
