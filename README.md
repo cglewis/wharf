@@ -19,26 +19,26 @@ Option 1
   
 ```
 |─Service1
-  |─client
-    |─client.txt
-    └─test.py (this should be whatever is specified in the client.txt, see below)
-  |─docker
-    └─Dockerfile
-  |─html
-    |─about.html
-    |─body.html
-    └─link.html
-  └─description.txt
+| |─client
+| | |─client.txt
+| | └─test.py (this should be whatever is specified in the client.txt, see below)
+| |─docker
+| | └─Dockerfile
+| |─html
+| | |─about.html
+| | |─body.html
+| | └─link.html
+| └─description.txt
 └─Service2
   |─client
-    |─client.txt
-    └─test.py (this should be whatever is specified in the client.txt, see below)
+  | |─client.txt
+  | └─test.py (this should be whatever is specified in the client.txt, see below)
   |─docker
-    └─Dockerfile
+  | └─Dockerfile
   |─html
-    |─about.html
-    |─body.html
-    └─link.html
+  | |─about.html
+  | |─body.html
+  | └─link.html
   └─description.txt
 ```
 
@@ -46,7 +46,7 @@ Option 2
 
 ```
 |─Service1
-  └─Dockerfile
+| └─Dockerfile
 └─Service2
   └─Dockerfile
 ```
@@ -64,14 +64,14 @@ Create a .zip or .tar.gz of your service.
 ```
 |─Service1
   |─client
-    |─client.txt
-    └─test.py (this should be whatever is specified in the client.txt, see below)
+  | |─client.txt
+  | └─test.py (this should be whatever is specified in the client.txt, see below)
   |─docker
-    └─Dockerfile
+  | └─Dockerfile
   |─html
-    |─about.html
-    |─body.html
-    └─link.html
+  | |─about.html
+  | |─body.html
+  | └─link.html
   └─description.txt
 ```
 
