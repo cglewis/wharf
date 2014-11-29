@@ -2,6 +2,10 @@
 
 This is a high level overview of the direction I would like to take Wharf next.
 
+## Update!
+
+Make this work with Docker 1.0+
+
 
 ## Persistence
 
